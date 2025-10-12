@@ -23,6 +23,6 @@ export const stations: Station[] = [
     { id: 16, name: 'دانشگاه' },
     { id: 17, name: 'کارگر' },
     { id: 18, name: 'کوی امام' },
-    { id: 19, name: 'دفاع مقدس' },
-    { id: 20, name: 'صفه' },
+    // { id: 19, name: 'دفاع مقدس' },
+    { id: 19, name: 'صفه' },
 ];
