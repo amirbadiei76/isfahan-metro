@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 import type { ScheduleResult } from './components/ScheduleDisplay';
 import { stations } from './data/stations';
@@ -10,16 +10,23 @@ import ScheduleDisplay from './components/ScheduleDisplay';
 function App() {
         const [sourceStation, setSourceStation] = useState<string>('');
         const [destinationStation, setDestinationStation] = useState<string>('');
+        const [today, setToday] = useState<Date>();
+        const [isHoliday, setIsHoliday] = useState<boolean>();
+
+        useEffect(() => {
+            const currentDate = new Date().toLocaleString("en-US", {timeZone: 'Asia/Tehran'});
+            const today = new Date(currentDate);
+            const dayOfWeek = today.getDay();
+            const isHoliday = (dayOfWeek === 5);
+            console.log(today.toString(), dayOfWeek, isHoliday)
+            setToday(today);
+            setIsHoliday(isHoliday);
+        }, [])
 
         const upcomingTrains = useMemo((): ScheduleResult | null => {
             if (!sourceStation || !destinationStation || sourceStation === destinationStation) {
               return null;
             }
-
-            const currentDate = new Date().toLocaleString("fa-IR", {timeZone: 'Asia/Tehran'});
-            const today = new Date(currentDate);
-            const dayOfWeek = today.getDay();
-            const isHoliday = (dayOfWeek === 6);
 
             const source = stations.find(s => s.name === sourceStation);
             const destination = stations.find(s => s.name === destinationStation);
@@ -34,16 +41,17 @@ function App() {
             const directionText = `مسیر: ${source.name} به سمت ${destination.name}`;
 
             if (!allDepartures) {
-              return { dayType: dayType, departures: [], directionText: directionText, sourceStationName: '' };
+              return { isHoliday: isHoliday!, dayType: dayType, departures: [], directionText: directionText, sourceStationName: '' };
             }
             
-            const now = today.getHours() * 60 + today.getMinutes();
+            const now = today!.getHours() * 60 + today!.getMinutes();
             const upcoming = allDepartures.filter(time => {
             const [hour, minute] = time.split(':').map(Number);
             return (hour * 60 + minute) >= now;
         });
 
         return {
+          isHoliday: isHoliday!,
           dayType: dayType,
           departures: upcoming.slice(0, 5),
           directionText: directionText,
@@ -71,7 +79,7 @@ function App() {
                   label="ایستگاه مبدا"
                   value={sourceStation}
                   onChange={(e) => setSourceStation(e.target.value)}
-                  stations={stations.filter(s => s.name !== destinationStation)}
+                  stations={stations.filter(s => s.name !== destinationStation && !(isHoliday && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
                 />
                 <div className="flex justify-center">
                   <button
@@ -88,7 +96,7 @@ function App() {
                   label="ایستگاه مقصد"
                   value={destinationStation}
                   onChange={(e) => setDestinationStation(e.target.value)}
-                  stations={stations.filter(s => s.name !== sourceStation)}
+                  stations={stations.filter(s => s.name !== sourceStation && !(isHoliday && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
                   />
               </div>
             </div>
