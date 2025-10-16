@@ -31,7 +31,7 @@ export default function ScheduleDisplay ({ dayType, departures, directionText, s
             </div>
             ) : (
             <div className="text-center py-8">
-                <p className="text-yellow-400 text-lg">
+                <p className="text-yellow-400 text-lg rtl">
                 متاسفانه قطار دیگری برای امروز از این ایستگاه وجود ندارد.
                 </p>
             </div>

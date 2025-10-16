@@ -1,9 +1,0 @@
-{
-    "name": "isfahan-metro",
-    "main": "./src/main.tsx",
-    "compatibility_date": "2025-10-17",
-    "vars": {
-      "REVISION": "0.0.1"
-     },
-    "logpush": true
-}
