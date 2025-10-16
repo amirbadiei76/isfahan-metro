@@ -7,7 +7,7 @@ export interface ScheduleResult {
     isHoliday: boolean;
 }
 
-export default function ScheduleDisplay ({ dayType, departures, directionText, sourceStationName, isHoliday }: ScheduleResult) {
+export default function ScheduleDisplay ({ dayType, departures, directionText, sourceStationName }: ScheduleResult) {
     return (
         <div className="mt-8 bg-gray-800 p-6 rounded-lg shadow-lg animate-fade-in">
             <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
