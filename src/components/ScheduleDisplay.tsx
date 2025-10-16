@@ -16,7 +16,7 @@ export default function ScheduleDisplay ({ dayType, departures, directionText, s
             </div>
             </div>
     
-            {departures.length > 0 ? (
+            {departures && departures.length > 0 ? (
             <div>
                 <p className="mb-4 rtl text-gray-300">
                 {departures.length} حرکت بعدی از ایستگاه <strong className="text-yellow-400">{sourceStationName}</strong>:

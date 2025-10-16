@@ -8,52 +8,53 @@ import ScheduleDisplay from './components/ScheduleDisplay';
 
 
 function App() {
-    const [sourceStation, setSourceStation] = useState<string>('');
-    const [destinationStation, setDestinationStation] = useState<string>('');
+        const [sourceStation, setSourceStation] = useState<string>('');
+        const [destinationStation, setDestinationStation] = useState<string>('');
 
-    const upcomingTrains = useMemo((): ScheduleResult | null => {
-        if (!sourceStation || !destinationStation || sourceStation === destinationStation) {
-          return null;
-        }
+        const upcomingTrains = useMemo((): ScheduleResult | null => {
+            if (!sourceStation || !destinationStation || sourceStation === destinationStation) {
+              return null;
+            }
 
-        const currentDate = new Date().toLocaleString("en-US", {timeZone: 'Asia/Tehran'});
-        const today = new Date(currentDate);
-        const dayOfWeek = today.getDay();
-        console.log(today.toString(), currentDate.toString())
-        const isHoliday = (dayOfWeek === 6);
+            const currentDate = new Date().toLocaleString("fa-IR", {timeZone: 'Asia/Tehran'});
+            const today = new Date(currentDate);
+            const dayOfWeek = today.getDay();
+            const isHoliday = (dayOfWeek === 6);
 
-        const source = stations.find(s => s.name === sourceStation);
-        const destination = stations.find(s => s.name === destinationStation);
-      
-        if (!source || !destination) return null;
+            const source = stations.find(s => s.name === sourceStation);
+            const destination = stations.find(s => s.name === destinationStation);
 
-        const directionKey = source.id < destination.id ? 'qods_to_sofeh' : 'sofeh_to_qods';
-        const dayTypeKey = isHoliday ? 'holidays' : 'weekdays';
-      
-        const allDepartures = schedule[dayTypeKey][directionKey][sourceStation];
+            if (!source || !destination) return null;
 
-        if (!allDepartures) {
-          return { dayType: '', departures: [], directionText: '', sourceStationName: '' };
-        }
-        
-        const now = today.getHours() * 60 + today.getMinutes();
-        const upcoming = allDepartures.filter(time => {
-        const [hour, minute] = time.split(':').map(Number);
-        return (hour * 60 + minute) >= now;
-    });
+            const directionKey = source.id < destination.id ? 'qods_to_sofeh' : 'sofeh_to_qods';
+            const dayTypeKey = isHoliday ? 'holidays' : 'weekdays';
+          
+            const allDepartures = schedule[dayTypeKey][directionKey][sourceStation];
+            const dayType = isHoliday ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
+            const directionText = `مسیر: ${source.name} به سمت ${destination.name}`;
 
-    return {
-      dayType: isHoliday ? 'جمعه و روزهای تعطیل' : 'روزهای کاری',
-      departures: upcoming.slice(0, 5),
-      directionText: `مسیر: ${source.name} به سمت ${destination.name}`,
-      sourceStationName: source.name,
+            if (!allDepartures) {
+              return { dayType: dayType, departures: [], directionText: directionText, sourceStationName: '' };
+            }
+            
+            const now = today.getHours() * 60 + today.getMinutes();
+            const upcoming = allDepartures.filter(time => {
+            const [hour, minute] = time.split(':').map(Number);
+            return (hour * 60 + minute) >= now;
+        });
+
+        return {
+          dayType: dayType,
+          departures: upcoming.slice(0, 5),
+          directionText: directionText,
+          sourceStationName: source.name,
+        };
+    }, [sourceStation, destinationStation]);
+
+    const handleSwap = () => {
+        setSourceStation(destinationStation);
+        setDestinationStation(sourceStation);
     };
-  }, [sourceStation, destinationStation]);
-
-  const handleSwap = () => {
-      setSourceStation(destinationStation);
-      setDestinationStation(sourceStation);
-  };
 
     return (
       <>
@@ -75,7 +76,7 @@ function App() {
                 <div className="flex justify-center">
                   <button
                     onClick={handleSwap}
-                    className="p-2 bg-transparent rounded-full hover:bg-cyan-500 transition-transform duration-300 transform hover:rotate-180"
+                    className="bg-transparent rounded-full mt-0 md:mt-8 hover:bg-cyan-500 transition-transform duration-300 transform hover:rotate-180"
                     title="جابجایی مبدا و مقصد"
                     >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="transparent" viewBox="0 0 24 24" stroke="#2d2d2d">
@@ -92,11 +93,11 @@ function App() {
               </div>
             </div>
 
-            {upcomingTrains && <ScheduleDisplay {...upcomingTrains} />}
+            {<ScheduleDisplay {...upcomingTrains!} />}
 
             <footer className="text-center text-gray-500 mt-12 text-sm">
-              <p>طراحی و توسعه با ❤️ </p>
-              <p className="mt-1">آخرین بروزرسانی داده‌ها: مهر ۱۴۰۴</p>
+              <p className='rtl'>طراحی و توسعه با ❤️ </p>
+              <p className="mt-1 rtl">آخرین بروزرسانی داده‌ها: مهر ۱۴۰۴</p>
             </footer>
           </div>
         </main>
