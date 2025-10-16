@@ -1,35 +1,107 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useMemo, useState } from 'react'
 import './App.css'
+import type { ScheduleResult } from './components/ScheduleDisplay';
+import { stations } from './data/stations';
+import { schedule } from './data/schedule';
+import StationSelect from './components/StationSelect';
+import ScheduleDisplay from './components/ScheduleDisplay';
+
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [sourceStation, setSourceStation] = useState<string>('');
+    const [destinationStation, setDestinationStation] = useState<string>('');
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const upcomingTrains = useMemo((): ScheduleResult | null => {
+        if (!sourceStation || !destinationStation || sourceStation === destinationStation) {
+          return null;
+        }
+
+        const currentDate = new Date().toLocaleString("en-US", {timeZone: 'Asia/Tehran'});
+        const today = new Date(currentDate);
+        const dayOfWeek = today.getDay();
+        console.log(today.toString(), currentDate.toString())
+        const isHoliday = (dayOfWeek === 6);
+
+        const source = stations.find(s => s.name === sourceStation);
+        const destination = stations.find(s => s.name === destinationStation);
+      
+        if (!source || !destination) return null;
+
+        const directionKey = source.id < destination.id ? 'qods_to_sofeh' : 'sofeh_to_qods';
+        const dayTypeKey = isHoliday ? 'holidays' : 'weekdays';
+      
+        const allDepartures = schedule[dayTypeKey][directionKey][sourceStation];
+
+        if (!allDepartures) {
+          return { dayType: '', departures: [], directionText: '', sourceStationName: '' };
+        }
+        
+        const now = today.getHours() * 60 + today.getMinutes();
+        const upcoming = allDepartures.filter(time => {
+        const [hour, minute] = time.split(':').map(Number);
+        return (hour * 60 + minute) >= now;
+    });
+
+    return {
+      dayType: isHoliday ? 'جمعه و روزهای تعطیل' : 'روزهای کاری',
+      departures: upcoming.slice(0, 5),
+      directionText: `مسیر: ${source.name} به سمت ${destination.name}`,
+      sourceStationName: source.name,
+    };
+  }, [sourceStation, destinationStation]);
+
+  const handleSwap = () => {
+      setSourceStation(destinationStation);
+      setDestinationStation(sourceStation);
+  };
+
+    return (
+      <>
+        <header className="text-center my-8">
+          <h1 className="text-4xl font-bold text-cyan-400">برنامه حرکت قطار شهری اصفهان</h1>
+          <p className="text-gray-400 mt-2">ساعت حرکت قطارهای بعدی از ایستگاه مورد نظر شما</p>
+        </header>
+        <main className="bg-gray-900 min-h-screen flex flex-col items-center text-white p-4 font-[Vazirmatn]">
+            <div className="w-full max-w-2xl mx-auto">
+
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                <StationSelect
+                  label="ایستگاه مبدا"
+                  value={sourceStation}
+                  onChange={(e) => setSourceStation(e.target.value)}
+                  stations={stations.filter(s => s.name !== destinationStation)}
+                />
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleSwap}
+                    className="p-2 bg-transparent rounded-full hover:bg-cyan-500 transition-transform duration-300 transform hover:rotate-180"
+                    title="جابجایی مبدا و مقصد"
+                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="transparent" viewBox="0 0 24 24" stroke="#2d2d2d">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                  </button>
+                </div>
+                <StationSelect
+                  label="ایستگاه مقصد"
+                  value={destinationStation}
+                  onChange={(e) => setDestinationStation(e.target.value)}
+                  stations={stations.filter(s => s.name !== sourceStation)}
+                  />
+              </div>
+            </div>
+
+            {upcomingTrains && <ScheduleDisplay {...upcomingTrains} />}
+
+            <footer className="text-center text-gray-500 mt-12 text-sm">
+              <p>طراحی و توسعه با ❤️ </p>
+              <p className="mt-1">آخرین بروزرسانی داده‌ها: مهر ۱۴۰۴</p>
+            </footer>
+          </div>
+        </main>
+      </>
+    );
 }
 
 export default App
