@@ -78,7 +78,7 @@ function App() {
     return (
       <>
         <Header date={date} time={time}  />
-        <main className="bg-gray-900 min-h-screen flex flex-col items-center text-white p-4 font-vazir">
+        <main className="bg-gray-900 min-h-(--remain-height) flex flex-col items-center p-4 text-white font-vazir">
             <div className="w-full max-w-2xl mx-auto">
 
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
@@ -112,8 +112,8 @@ function App() {
             {<ScheduleDisplay {...upcomingTrains!} />}
 
             <footer className="text-center text-gray-500 mt-12 text-sm">
-              <p className='rtl'>طراحی و توسعه با ❤️ </p>
-              <p className="mt-1 rtl">آخرین بروزرسانی داده‌ها: مهر ۱۴۰۴</p>
+              <p className='rtl font-vazir'>طراحی و توسعه با ❤️ </p>
+              <p className="mt-1 font-vazir rtl">آخرین بروزرسانی داده‌ها: مهر ۱۴۰۴</p>
             </footer>
           </div>
         </main>

@@ -12,6 +12,8 @@
   --light-theme: #dcdcdc;
   --dark-theme: #303030;
 
+  --remain-height: calc(100vh - 8.9rem)
+
 }
 
 .rtl {
