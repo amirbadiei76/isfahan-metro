@@ -5,7 +5,7 @@ import { stations } from './data/stations';
 import { schedule } from './data/schedule';
 import StationSelect from './components/StationSelect';
 import ScheduleDisplay from './components/ScheduleDisplay';
-import { getPersianDate, getPersianStringDate, getPersianStringTime, getTodayTime, todayIsHoliday } from './utils/dateUtils';
+import { getPersianStringDate, getPersianStringTime, getTodayTime, todayIsHoliday } from './utils/dateUtils';
 import Header from './components/Header';
 
 
@@ -19,6 +19,8 @@ function App() {
         const [isOtherHoliday, setIsOtherHoliday] = useState(false);
 
         useEffect(() => {
+          setIsOtherHoliday(false)
+
             setInterval(() => {
                 const time = getPersianStringTime()
                 const date = getPersianStringDate();
@@ -75,7 +77,7 @@ function App() {
 
     return (
       <>
-        <Header date={date} time={time} />
+        <Header date={date} time={time}  />
         <main className="bg-gray-900 min-h-screen flex flex-col items-center text-white p-4 font-vazir">
             <div className="w-full max-w-2xl mx-auto">
 
