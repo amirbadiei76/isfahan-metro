@@ -12,7 +12,7 @@ interface StationSelectProps {
 export default function StationSelect ({ label, value, onChange, stations }: StationSelectProps) {
     return (
         <div className="flex flex-col font-vazir">
-            <label htmlFor={label} className="mb-2text-sm font-medium text-gray-300">{label}</label>
+            <label htmlFor={label} className="mb-2 rtl text-sm font-medium text-gray-300">{label}</label>
             <select
                 id={label}
                 value={value}

@@ -19,13 +19,13 @@ export default function ScheduleDisplay ({ dayType, departures, directionText, s
     
             {departures && departures.length > 0 ? (
             <div>
-                <p className="mb-4 rtl text-gray-300">
-                {departures.length} حرکت بعدی از ایستگاه <strong className="text-yellow-400">{sourceStationName}</strong>:
+                <p className="mb-4 rtl text-gray-300 font-vazir">
+                {departures.length} حرکت بعدی از ایستگاه <strong className="text-yellow-400 font-vazir">{sourceStationName}</strong>:
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 text-center">
                 {departures.map((time, index) => (
                     <div key={index} className="bg-gray-700 p-3 rounded-md shadow-md">
-                    <p className="text-2xl font-mono font-bold tracking-wider">{time}</p>
+                        <p className="text-2xl font-vazir font-bold tracking-wider">{time}</p>
                     </div>
                 ))}
                 </div>
