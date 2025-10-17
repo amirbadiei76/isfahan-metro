@@ -10,7 +10,6 @@ interface StationSelectProps {
 }
 
 export default function StationSelect ({ label, value, onChange, stations }: StationSelectProps) {
-    console.log(stations)
     return (
         <div className="flex flex-col">
             <label htmlFor={label} className="mb-2 text-sm font-medium text-gray-300">{label}</label>

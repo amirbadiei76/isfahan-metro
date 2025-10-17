@@ -5,22 +5,31 @@ import { stations } from './data/stations';
 import { schedule } from './data/schedule';
 import StationSelect from './components/StationSelect';
 import ScheduleDisplay from './components/ScheduleDisplay';
+import { getPersianDate, getPersianStringDate, getPersianStringTime, getTodayTime, todayIsHoliday } from './utils/dateUtils';
+import Header from './components/Header';
 
 
 function App() {
         const [sourceStation, setSourceStation] = useState<string>('');
         const [destinationStation, setDestinationStation] = useState<string>('');
-        const [today, setToday] = useState<Date>();
-        const [isHoliday, setIsHoliday] = useState<boolean>();
+        const [today, setToday] = useState<Date>(getTodayTime());
+        const [isHoliday, setIsHoliday] = useState<boolean>(todayIsHoliday());
+        const [time, setTime] = useState<string>(getPersianStringTime())
+        const [date, setDate] = useState<string>(getPersianStringDate());
+        const [isOtherHoliday, setIsOtherHoliday] = useState(false);
 
         useEffect(() => {
-            const currentDate = new Date().toLocaleString("en-US", {timeZone: 'Asia/Tehran'});
-            const today = new Date(currentDate);
-            const dayOfWeek = today.getDay();
-            const isHoliday = (dayOfWeek === 5);
-            console.log(today.toString(), dayOfWeek, isHoliday)
-            setToday(today);
-            setIsHoliday(isHoliday);
+            setInterval(() => {
+                const time = getPersianStringTime()
+                const date = getPersianStringDate();
+                const today = getTodayTime();
+                const isHoliday = todayIsHoliday()
+
+                setToday(today)
+                setIsHoliday(isHoliday)
+                setTime(time)
+                setDate(date)
+            }, 1000);
         }, [])
 
         const upcomingTrains = useMemo((): ScheduleResult | null => {
@@ -34,14 +43,14 @@ function App() {
             if (!source || !destination) return null;
 
             const directionKey = source.id < destination.id ? 'qods_to_sofeh' : 'sofeh_to_qods';
-            const dayTypeKey = isHoliday ? 'holidays' : 'weekdays';
+            const dayTypeKey = (isHoliday || isOtherHoliday) ? 'holidays' : 'weekdays';
           
             const allDepartures = schedule[dayTypeKey][directionKey][sourceStation];
-            const dayType = isHoliday ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
+            const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
             const directionText = `مسیر: ${source.name} به سمت ${destination.name}`;
 
             if (!allDepartures) {
-              return { isHoliday: isHoliday!, dayType: dayType, departures: [], directionText: directionText, sourceStationName: '' };
+              return { isHoliday: (isHoliday! || isOtherHoliday), dayType: dayType, departures: [], directionText: directionText, sourceStationName: '' };
             }
             
             const now = today!.getHours() * 60 + today!.getMinutes();
@@ -51,13 +60,13 @@ function App() {
         });
 
         return {
-          isHoliday: isHoliday!,
+          isHoliday: (isHoliday! || isOtherHoliday),
           dayType: dayType,
           departures: upcoming.slice(0, 5),
           directionText: directionText,
           sourceStationName: source.name,
         };
-    }, [sourceStation, destinationStation]);
+    }, [sourceStation, destinationStation, isOtherHoliday]);
 
     const handleSwap = () => {
         setSourceStation(destinationStation);
@@ -66,11 +75,8 @@ function App() {
 
     return (
       <>
-        <header className="text-center my-8">
-          <h1 className="text-4xl font-bold text-cyan-400">برنامه حرکت قطار شهری اصفهان</h1>
-          <p className="text-gray-400 mt-2">ساعت حرکت قطارهای بعدی از ایستگاه مورد نظر شما</p>
-        </header>
-        <main className="bg-gray-900 min-h-screen flex flex-col items-center text-white p-4 font-[Vazirmatn]">
+        <Header date={date} time={time} />
+        <main className="bg-gray-900 min-h-screen flex flex-col items-center text-white p-4 font-vazir">
             <div className="w-full max-w-2xl mx-auto">
 
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
@@ -79,7 +85,7 @@ function App() {
                   label="ایستگاه مبدا"
                   value={sourceStation}
                   onChange={(e) => setSourceStation(e.target.value)}
-                  stations={stations.filter(s => s.name !== destinationStation && !(isHoliday && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
+                  stations={stations.filter(s => s.name !== destinationStation && !((isHoliday || isOtherHoliday) && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
                 />
                 <div className="flex justify-center">
                   <button
@@ -96,7 +102,7 @@ function App() {
                   label="ایستگاه مقصد"
                   value={destinationStation}
                   onChange={(e) => setDestinationStation(e.target.value)}
-                  stations={stations.filter(s => s.name !== sourceStation && !(isHoliday && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
+                  stations={stations.filter(s => s.name !== sourceStation && !((isHoliday || isOtherHoliday) && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
                   />
               </div>
             </div>
