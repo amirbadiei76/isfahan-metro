@@ -13,7 +13,7 @@ export default function ScheduleDisplay ({ dayType, departures, directionText, s
             <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
             <div>
                 <h2 className="text-xl font-semibold text-cyan-400">{directionText}</h2>
-                { dayType && <p className="text-sm text-gray-400">برنامه امروز {(dayType)}</p> }
+                { dayType && <p className="text-sm text-gray-400">برنامه امروز ({dayType})</p> }
             </div>
             </div>
     
