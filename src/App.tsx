@@ -113,10 +113,10 @@ function App() {
                 <div className="flex justify-center">
                   <button
                     onClick={handleSwap}
-                    className="bg-transparent rounded-full mt-0 md:mt-8 hover:bg-cyan-500 transition-transform duration-300 transform hover:rotate-180"
+                    className="bg-transparent rounded-full mt-0 md:mt-8 hover:bg-gray-800 hover:cursor-pointer transition-transform duration-300 transform hover:rotate-180"
                     title="جابجایی مبدا و مقصد"
                     >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="transparent" viewBox="0 0 24 24" stroke="#2d2d2d">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 stroke-gray-300" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                     </svg>
                   </button>
