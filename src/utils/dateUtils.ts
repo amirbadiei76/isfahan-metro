@@ -28,7 +28,12 @@ const dayNames = [
 
 export const getPersianDate = () => {
     moment.locale('fa');
-    return moment();
+    // moment(new Date())
+    // console.log(moment().minute())
+    // let today = new Date().toLocaleDateString('fa-IR-u-nu-latn');
+    // console.log(today);
+
+    return moment(new Date());
 };
 
 export const getTodayTime = () => {

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
-import type { ScheduleResult } from './components/ScheduleDisplay';
+import type { ResultTime, ScheduleResult } from './components/ScheduleDisplay';
 import { stations } from './data/stations';
 import { schedule } from './data/schedule';
 import StationSelect from './components/StationSelect';
@@ -48,26 +48,47 @@ function App() {
             const dayTypeKey = (isHoliday || isOtherHoliday) ? 'holidays' : 'weekdays';
           
             const allDepartures = schedule[dayTypeKey][directionKey][sourceStation];
+            const allArrivals = schedule[dayTypeKey][directionKey][destinationStation];
+
             const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
             const directionText = `مسیر: ${source.name} به سمت ${destination.name}`;
 
-            if (!allDepartures) {
-              return { isHoliday: (isHoliday! || isOtherHoliday), dayType: dayType, departures: [], directionText: directionText, sourceStationName: '' };
+            if (!allArrivals || !allDepartures) {
+              return { isHoliday: (isHoliday! || isOtherHoliday), dayType: dayType, results: [], directionText: directionText, sourceStationName: '' };
             }
+
             
             const now = today!.getHours() * 60 + today!.getMinutes();
-            const upcoming = allDepartures.filter(time => {
-            const [hour, minute] = time.split(':').map(Number);
-            return (hour * 60 + minute) >= now;
-        });
+            const upcomingDepartures = allDepartures.filter(time => {
+              const [hour, minute] = time.split(':').map(Number);
+              return (hour * 60 + minute) >= now;
+            });
 
-        return {
-          isHoliday: (isHoliday! || isOtherHoliday),
-          dayType: dayType,
-          departures: upcoming.slice(0, 5),
-          directionText: directionText,
-          sourceStationName: source.name,
-        };
+            const upcomingArrivals: string[] = []
+            upcomingDepartures.forEach((upItem) => {
+                allDepartures.forEach((item, index) => {
+                    if (upItem === item) {
+                        upcomingArrivals.push(allArrivals[index])
+                    }
+                })
+            })
+            
+            const results: ResultTime[] = []
+            for (let index = 0; index < upcomingArrivals.length; index++) {
+                results.push({
+                  arrival: upcomingArrivals[index],
+                  departure: upcomingDepartures[index]
+                })
+            }
+
+
+            return {
+              isHoliday: (isHoliday! || isOtherHoliday),
+              dayType: dayType,
+              results: results.slice(0, 5),
+              directionText: directionText,
+              sourceStationName: source.name,
+            };
     }, [sourceStation, destinationStation, isOtherHoliday]);
 
     const handleSwap = () => {
@@ -81,7 +102,7 @@ function App() {
         <main className="bg-gray-900 min-h-(--remain-height) flex flex-col items-center p-4 text-white font-vazir">
             <div className="w-full max-w-2xl mx-auto">
 
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg rtl">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                 <StationSelect
                   label="ایستگاه مبدا"
@@ -109,7 +130,7 @@ function App() {
               </div>
             </div>
 
-            {<ScheduleDisplay {...upcomingTrains!} />}
+            { <ScheduleDisplay {...upcomingTrains!} /> }
 
             <footer className="text-center text-gray-500 mt-12 text-sm">
               <p className='rtl font-vazir'>طراحی و توسعه با ❤️ </p>

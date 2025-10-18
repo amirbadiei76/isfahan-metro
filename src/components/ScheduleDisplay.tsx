@@ -1,13 +1,20 @@
 
+export interface ResultTime {
+    departure: string,
+    arrival: string
+}
+
+
 export interface ScheduleResult {
     dayType: string;
-    departures: string[];
+    results: ResultTime[]
     directionText: string;
     sourceStationName: string;
     isHoliday: boolean;
 }
 
-export default function ScheduleDisplay ({ dayType, departures, directionText, sourceStationName }: ScheduleResult) {
+export default function ScheduleDisplay ({ dayType, results, directionText, sourceStationName }: ScheduleResult) {
+
     return (
         <div className="mt-8 bg-gray-800 p-6 rounded-lg shadow-lg animate-fade-in rtl">
             <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
@@ -17,17 +24,26 @@ export default function ScheduleDisplay ({ dayType, departures, directionText, s
             </div>
             </div>
     
-            {departures && departures.length > 0 ? (
+            {results && results.length > 0 ? (
             <div>
                 <p className="mb-4 rtl text-gray-300 font-vazir">
-                {departures.length} حرکت بعدی از ایستگاه <strong className="text-yellow-400 font-vazir">{sourceStationName}</strong>:
+                {results.length} حرکت بعدی از ایستگاه <strong className="text-yellow-400 font-vazir">{sourceStationName}</strong>:
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 text-center">
-                {departures.map((time, index) => (
-                    <div key={index} className="bg-gray-700 p-3 rounded-md shadow-md">
-                        <p className="text-2xl font-vazir font-bold tracking-wider">{time}</p>
+                <div
+                    className="flex flex-col gap-3"
+                >
+                    <div className="flex justify-between items-center">
+                        <span>حرکت از مبدا</span>
+                        <span>رسیدن به مقصد</span>
                     </div>
-                ))}
+                    {
+                        results.map((resultTime, index) => (
+                            <div key={index} className="bg-gray-700 flex justify-between items-center p-3 rounded-md shadow-md">
+                                <span className="text-2xl font-vazir font-bold tracking-wider">{resultTime.departure}</span>
+                                <span className="text-2xl font-vazir font-bold tracking-wider">{resultTime.arrival}</span>
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
             ) : (

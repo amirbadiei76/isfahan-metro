@@ -8,7 +8,7 @@ export const stations: Station[] = [
     { id: 1, name: 'قدس' },
     { id: 2, name: 'بهارستان' },
     { id: 3, name: 'گلستان' },
-    { id: 4, name: 'مفتح' },
+    { id: 4, name: 'شهید مفتح' },
     { id: 5, name: 'شهید علیخانی' },
     { id: 6, name: 'جابر' },
     { id: 7, name: 'کاوه' },
