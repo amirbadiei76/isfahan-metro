@@ -20,11 +20,16 @@ export default function StationSelect ({ label, value, onChange, stations }: Sta
                 className="bg-gray-700 rtl border outline-0 border-gray-600 text-white text-md rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-3"
             >
                 <option value="" disabled>انتخاب کنید...</option>
-                    {stations.map((station) => (
-                <option key={station.id} value={station.name}>
-                    {station.name}
-                </option>
-            ))}
+                    {
+                        stations.map((station) => (
+                            <option
+                                key={station.id}
+                                value={station.name}
+                            >
+                                {station.name}
+                            </option>
+                        ))
+                    }
             </select>
         </div>
     );

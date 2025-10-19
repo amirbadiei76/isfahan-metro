@@ -1,48 +1,11 @@
-import moment from 'jalali-moment';
-// import * as isHoliday from 'shamsi-holiday';
-
-const monthNames = [
-    'فروردین',
-    'اردیبهشت',
-    'خرداد',
-    'تیر',
-    'مرداد',
-    'شهریور',
-    'مهر',
-    'آبان',
-    'آذر',
-    'دی',
-    'بهمن',
-    'اسفند'
-]
-
-const dayNames = [
-    'شنبه',
-    'یکشنبه',
-    'دوشنبه',
-    'سه شنبه',
-    'چهارشنبه',
-    'پنجشنبه',
-    'جمعه'
-]
-
-export const getPersianDate = () => {
-    moment.locale('fa');
-    // moment(new Date())
-    // console.log(moment().minute())
-    // let today = new Date().toLocaleDateString('fa-IR-u-nu-latn');
-    // console.log(today);
-
-    return moment(new Date());
-};
-
 export const getTodayTime = () => {
-    const currentDate = new Date().toLocaleString("en-US", {timeZone: 'Asia/Tehran'});
+    const currentDate = new Date().toLocaleString('fa-IR-u-nu-latn', {timeZone: 'Asia/Tehran'});
     return new Date(currentDate.toLocaleString());
 }
 
 export const todayIsHoliday = () => {
-    return moment().jDay() == 6;
+    const splitedDate = getPersianStringDate().toString().split(' ');
+    return splitedDate[splitedDate.length - 1] == 'جمعه';
 }
 
 export const getPersianStringTime = () => {
@@ -52,8 +15,16 @@ export const getPersianStringTime = () => {
 
 
 export const getPersianStringDate = () => {
-    const moment = getPersianDate();
-    return dayNames[moment.jDay()] + " " + moment.jDate() + " " + monthNames[moment.jMonth()] + " " + moment.jYear()
+    const date = new Date();
+    const faDate = new Intl.DateTimeFormat("fa-IR-u-nu-latn", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: 'Asia/Tehran'
+    }).format(date).toString().replace(',', '')
+    const reeverseDate = faDate.split(' ').reverse().join(' ')
+    return reeverseDate;
 }
 
 
