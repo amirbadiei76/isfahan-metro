@@ -49,7 +49,7 @@ function App() {
           
             const allDepartures = schedule[dayTypeKey][directionKey][sourceStation];
             const allArrivals = schedule[dayTypeKey][directionKey][destinationStation];
-
+            
             const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
             const directionText = `مسیر: ${source.name} به سمت ${destination.name}`;
 
@@ -64,10 +64,13 @@ function App() {
               return (hour * 60 + minute) >= now;
             });
 
+            // console.log('dep: ' + allDepartures.length, "arr: " + allArrivals.length)
             const upcomingArrivals: string[] = []
-            upcomingDepartures.forEach((upItem) => {
-                allDepartures.forEach((item, index) => {
-                    if (upItem === item) {
+
+            allDepartures.forEach((item, index) => {
+                upcomingDepartures.forEach((upItem, upIndex) => {
+                    if (item == upItem) {
+                        // console.log(index)
                         upcomingArrivals.push(allArrivals[index])
                     }
                 })

@@ -1,6 +1,6 @@
 export const getTodayTime = () => {
     const currentDate = new Date().toLocaleString('fa-IR-u-nu-latn', {timeZone: 'Asia/Tehran'});
-    return new Date(currentDate.toLocaleString());
+    return new Date(currentDate);
 }
 
 export const todayIsHoliday = () => {
