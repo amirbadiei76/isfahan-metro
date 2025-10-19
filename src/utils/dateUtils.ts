@@ -5,7 +5,8 @@ export const getTodayTime = () => {
 
 export const todayIsHoliday = () => {
     const splitedDate = getPersianStringDate().toString().split(' ');
-    return splitedDate[splitedDate.length - 1] == 'جمعه';
+    console.log(splitedDate[0])
+    return splitedDate[0] == 'جمعه';
 }
 
 export const getPersianStringTime = () => {
