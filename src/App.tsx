@@ -134,7 +134,7 @@ function App() {
             { <ScheduleDisplay {...upcomingTrains!} /> }
 
             <footer className="text-center text-gray-500 mt-12 text-sm">
-              <p className='rtl font-vazir'>طراحی و توسعه با ❤️ </p>
+              <p className='rtl font-vazir'>طراحی و توسعه با ❤️ توسط جامعه برای جامعه</p>
               <p className="mt-1 font-vazir rtl">آخرین بروزرسانی داده‌ها: مهر ۱۴۰۴</p>
             </footer>
           </div>
