@@ -16,17 +16,17 @@ export interface ScheduleResult {
 export default function ScheduleDisplay ({ dayType, results, directionText, sourceStationName }: ScheduleResult) {
 
     return (
-        <div className="mt-8 bg-gray-900 p-6 rounded-lg shadow-lg animate-fade-in rtl">
+        <div className="mt-8 bg-gray-800 p-6 rounded-lg shadow-lg animate-fade-in rtl">
             <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
             <div>
                 <h2 className="text-xl font-semibold text-cyan-500">{directionText}</h2>
-                { dayType && <p className="text-sm text-blue-900">برنامه امروز ({dayType})</p> }
+                { dayType && <p className="text-sm text-blue-700">برنامه امروز ({dayType})</p> }
             </div>
             </div>
     
             {results && results.length > 0 ? (
             <div>
-                <p className="mb-4 rtl text-gray-300 font-vazir">
+                <p className="mb-4 rtl text-gray-400 font-vazir">
                 {results.length} حرکت بعدی از ایستگاه <strong className="text-yellow-400 font-vazir">{sourceStationName}</strong>:
                 </p>
                 <div
