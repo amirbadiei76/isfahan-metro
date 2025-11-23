@@ -30,7 +30,7 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
                 {results.length} حرکت بعدی از ایستگاه <strong className="text-yellow-500 font-vazir">{sourceStationName}</strong>:
                 </p>
                 <div
-                    className="flex flex-col gap-3"
+                    className="flex flex-col gap-1"
                 >
                     <div className="flex justify-between items-center">
                         <span>حرکت از مبدا</span>
