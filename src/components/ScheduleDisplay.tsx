@@ -17,9 +17,9 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
 
     return (
         <div className="mt-8 bg-blue-400 p-6 rounded-lg shadow-lg animate-fade-in rtl">
-            <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
+            <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
             <div>
-                <h2 className="text-xl font-semibold text-cyan-400">{directionText}</h2>
+                <h2 className="text-xl font-semibold text-cyan-500">{directionText}</h2>
                 { dayType && <p className="text-sm text-blue-800">برنامه امروز ({dayType})</p> }
             </div>
             </div>
