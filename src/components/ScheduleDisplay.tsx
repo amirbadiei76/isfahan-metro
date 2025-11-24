@@ -16,7 +16,7 @@ export interface ScheduleResult {
 export default function ScheduleDisplay ({ dayType, results, directionText, sourceStationName }: ScheduleResult) {
 
     return (
-        <div className="mt-8 bg-blue-500 p-6 rounded-lg shadow-lg animate-fade-in rtl">
+        <div className="mt-8 bg-blue-400 p-6 rounded-lg shadow-lg animate-fade-in rtl">
             <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
             <div>
                 <h2 className="text-xl font-semibold text-cyan-400">{directionText}</h2>
@@ -26,7 +26,7 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
     
             {results && results.length > 0 ? (
             <div>
-                <p className="mb-4 rtl text-gray-600 font-vazir">
+                <p className="mb-4 rtl text-gray-700 font-vazir">
                 {results.length} حرکت بعدی از ایستگاه <strong className="text-yellow-500 font-vazir">{sourceStationName}</strong>:
                 </p>
                 <div
