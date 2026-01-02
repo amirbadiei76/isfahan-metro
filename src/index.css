@@ -24,6 +24,64 @@
   direction: ltr;
 }
 
+.metro-line-bg {
+  stroke: #555; /* رنگ خاکستری تیره برای خطی که انتخاب نشده */
+  stroke-width: 6px;
+  stroke-linecap: round;
+}
+
+/* خط هایلایت شده (مسیر انتخابی) */
+.metro-line-highlight {
+  stroke: #00bcd4; /* رنگ فیروزه‌ای (شبیه به هدر برنامه) */
+  stroke-width: 8px; /* کمی ضخیم‌تر تا روی خط قبلی را بپوشاند */
+  stroke-linecap: round;
+  /* انیمیشن برای رسم شدن خط */
+  /* stroke-dasharray: 1000;
+  animation: dash 5s linear forwards; */
+}
+
+/* @keyframes dash {
+  from { stroke-dashoffset: 1000; }
+  to { stroke-dashoffset: 0; }
+} */
+
+/* دایره ایستگاه (عادی) */
+.station-circle {
+  fill: #999; /* رنگ دایره‌های عادی */
+  stroke: #555;
+  stroke-width: 2px;
+  transition: all 0.3s ease;
+}
+
+/* دایره ایستگاه (هایلایت شده) */
+.station-circle-highlight {
+  fill: #fff; /* رنگ دایره‌های هایلایت */
+  stroke: #00bcd4; /* حاشیه فیروزه‌ای */
+  stroke-width: 3px;
+  transform: scale(1.1);
+  transition: all 0.3s ease;
+}
+
+/* متن ایستگاه (عادی) */
+.station-text {
+  fill: #aaa; /* رنگ متن عادی */
+  font-size: 10px;
+  font-weight: normal;
+  font-family: 'Vazirmatn', sans-serif;
+  direction: rtl;
+  text-anchor: start;
+}
+
+/* متن ایستگاه (هایلایت شده) */
+.station-text-highlight {
+  fill: #fff; /* رنگ متن هایلایت */
+  font-size: 11px;
+  font-weight: bold;
+  font-family: 'Vazirmatn', sans-serif;
+  direction: rtl;
+  text-anchor: start;
+}
+
 @theme inline {
   --font-vazir: 'Vazir';
 

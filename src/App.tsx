@@ -7,89 +7,91 @@ import StationSelect from './components/StationSelect';
 import ScheduleDisplay from './components/ScheduleDisplay';
 import { getPersianStringDate, getPersianStringTime, getTodayTime, todayIsHoliday } from './utils/dateUtils';
 import Header from './components/Header';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import MetroMap from './components/MetroMap';
 
 
 function App() {
-        const [sourceStation, setSourceStation] = useState<string>('');
-        const [destinationStation, setDestinationStation] = useState<string>('');
-        const [today, setToday] = useState<Date>(getTodayTime());
-        const [isHoliday, setIsHoliday] = useState<boolean>(todayIsHoliday());
-        const [time, setTime] = useState<string>(getPersianStringTime())
-        const [date, setDate] = useState<string>(getPersianStringDate());
-        const [isOtherHoliday, setIsOtherHoliday] = useState(false);
+    const [sourceStation, setSourceStation] = useState<string>('');
+    const [destinationStation, setDestinationStation] = useState<string>('');
+    const [today, setToday] = useState<Date>(getTodayTime());
+    const [isHoliday, setIsHoliday] = useState<boolean>(todayIsHoliday());
+    const [time, setTime] = useState<string>(getPersianStringTime())
+    const [date, setDate] = useState<string>(getPersianStringDate());
+    const [isOtherHoliday, setIsOtherHoliday] = useState(false);
 
-        useEffect(() => {
-          setIsOtherHoliday(false)
+    useEffect(() => {
+      setIsOtherHoliday(false)
 
-            setInterval(() => {
-                const time = getPersianStringTime()
-                const date = getPersianStringDate();
-                const today = getTodayTime();
-                const isHoliday = todayIsHoliday()
+      setInterval(() => {
+          const time = getPersianStringTime()
+          const date = getPersianStringDate();
+          const today = getTodayTime();
+          const isHoliday = todayIsHoliday()
 
-                setToday(today)
-                setIsHoliday(isHoliday)
-                setTime(time)
-                setDate(date)
-            }, 1000);
-        }, [])
+          setToday(today)
+          setIsHoliday(isHoliday)
+          setTime(time)
+          setDate(date)
+      }, 1000);
+    }, [])
 
-        const upcomingTrains = useMemo((): ScheduleResult | null => {
-            if (!sourceStation || !destinationStation || sourceStation === destinationStation) {
-              return null;
-            }
+    const upcomingTrains = useMemo((): ScheduleResult | null => {
+        if (!sourceStation || !destinationStation || sourceStation === destinationStation) {
+          return null;
+        }
 
-            const source = stations.find(s => s.name === sourceStation);
-            const destination = stations.find(s => s.name === destinationStation);
+        const source = stations.find(s => s.name === sourceStation);
+        const destination = stations.find(s => s.name === destinationStation);
 
-            if (!source || !destination) return null;
+        if (!source || !destination) return null;
 
-            const directionKey = source.id < destination.id ? 'qods_to_sofeh' : 'sofeh_to_qods';
-            const dayTypeKey = (isHoliday || isOtherHoliday) ? 'holidays' : 'weekdays';
-          
-            const allDepartures = schedule[dayTypeKey][directionKey][sourceStation];
-            const allArrivals = schedule[dayTypeKey][directionKey][destinationStation];
+        const directionKey = source.id < destination.id ? 'qods_to_sofeh' : 'sofeh_to_qods';
+        const dayTypeKey = (isHoliday || isOtherHoliday) ? 'holidays' : 'weekdays';
+      
+        const allDepartures = schedule[dayTypeKey][directionKey][sourceStation];
+        const allArrivals = schedule[dayTypeKey][directionKey][destinationStation];
 
-            const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
-            const directionText = `مسیر: ${source.name} به سمت ${destination.name}`;
+        const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
+        const directionText = `مسیر: ${source.name} به سمت ${destination.name}`;
 
-            if (!allArrivals || !allDepartures) {
-              return { isHoliday: (isHoliday! || isOtherHoliday), dayType: dayType, results: [], directionText: directionText, sourceStationName: '' };
-            }
+        if (!allArrivals || !allDepartures) {
+          return { isHoliday: (isHoliday! || isOtherHoliday), dayType: dayType, results: [], directionText: directionText, sourceStationName: '' };
+        }
 
-            
-            const now = today!.getHours() * 60 + today!.getMinutes();
-            const upcomingDepartures = allDepartures.filter(time => {
-              const [hour, minute] = time.split(':').map(Number);
-              return (hour * 60 + minute) >= now;
-            });
+        
+        const now = today!.getHours() * 60 + today!.getMinutes();
+        const upcomingDepartures = allDepartures.filter(time => {
+          const [hour, minute] = time.split(':').map(Number);
+          return (hour * 60 + minute) >= now;
+        });
 
-            const upcomingArrivals: string[] = []
+        const upcomingArrivals: string[] = []
 
-            upcomingDepartures.forEach((upItem) => {
-                allDepartures.forEach((item, index) => {
-                    if (item == upItem) {
-                        upcomingArrivals.push(allArrivals[index])
-                    }
-                })
+        upcomingDepartures.forEach((upItem) => {
+            allDepartures.forEach((item, index) => {
+                if (item == upItem) {
+                    upcomingArrivals.push(allArrivals[index])
+                }
             })
-            
-            const results: ResultTime[] = []
-            for (let index = 0; index < upcomingArrivals.length; index++) {
-                results.push({
-                  arrival: upcomingArrivals[index],
-                  departure: upcomingDepartures[index]
-                })
-            }
+        })
+        
+        const results: ResultTime[] = []
+        for (let index = 0; index < upcomingArrivals.length; index++) {
+            results.push({
+              arrival: upcomingArrivals[index],
+              departure: upcomingDepartures[index]
+            })
+        }
 
 
-            return {
-              isHoliday: (isHoliday! || isOtherHoliday),
-              dayType: dayType,
-              results: results.slice(0, 5),
-              directionText: directionText,
-              sourceStationName: source.name,
-            };
+        return {
+          isHoliday: (isHoliday! || isOtherHoliday),
+          dayType: dayType,
+          results: results.slice(0, 5),
+          directionText: directionText,
+          sourceStationName: source.name,
+        };
     }, [sourceStation, destinationStation, isOtherHoliday]);
 
     const handleSwap = () => {
@@ -131,7 +133,46 @@ function App() {
               </div>
             </div>
 
-            { <ScheduleDisplay {...upcomingTrains!} /> }
+            {/* { <ScheduleDisplay {...upcomingTrains!} /> } */}
+            {(
+              <div className="mt-8 space-y-8">
+                {/* بخش نقشه با قابلیت زوم */}
+                <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
+                  <h2 className="text-xl font-semibold text-cyan-400 mb-4">نقشه شماتیک مسیر</h2>
+                  <TransformWrapper
+                    initialScale={1}
+                    initialPositionX={0}
+                    initialPositionY={0}
+                    minScale={0.5}
+                    maxScale={10}
+                  >
+                    {({ zoomIn, zoomOut, resetTransform }) => (
+                      <>
+                        {/* دکمه‌های کنترل زوم */}
+                        <div className="flex gap-2 mb-2">
+                          <button onClick={() => zoomIn()} className="px-3 py-1 bg-gray-600 rounded text-lg">+</button>
+                          <button onClick={() => zoomOut()} className="px-3 py-1 bg-gray-600 rounded text-lg">-</button>
+                          <button onClick={() => resetTransform()} className="px-3 py-1 bg-gray-600 rounded text-sm">بازنشانی</button>
+                        </div>
+                        {/* کامپوننت اصلی که محتوای نقشه را نگه می‌دارد */}
+                        <TransformComponent
+                          wrapperStyle={{ width: '100%', height: '500px', cursor: 'grab' }}
+                          contentStyle={{ width: '100%', height: '100%' }}
+                        >
+                          <MetroMap
+                            sourceStationName={sourceStation}
+                            destinationStationName={destinationStation}
+                          />
+                        </TransformComponent>
+                      </>
+                    )}
+                  </TransformWrapper>
+                </div>
+              
+                {/* بخش نمایش نتایج (که از قبل داشتیم) */}
+                <ScheduleDisplay {...upcomingTrains!} />
+              </div>
+            )}
 
             <footer className="text-center text-gray-500 mt-12 text-sm">
               <p className='rtl font-vazir'>طراحی و توسعه با ❤️ توسط جامعه برای جامعه</p>
