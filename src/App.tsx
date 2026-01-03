@@ -102,8 +102,69 @@ function App() {
     return (
       <>
         <Header date={date} time={time}  />
-        <main className="bg-gray-900 min-h-(--remain-height) flex flex-col items-center p-5 text-white font-vazir">
-            <div className="w-full max-w-2xl mx-auto">
+        <main className="bg-gray-900 min-h-(--remain-height) flex w-full flex-col md:flex-row p-5 gap-4 text-white font-vazir">
+          
+          <div className='flex flex-1 flex-col bg-gray-800 p-4 rounded-lg shadow-lg relative'>
+            <h2 className="text-xl font-semibold text-cyan-400 mb-4">نقشه شماتیک مسیر</h2>
+            <TransformWrapper
+              initialScale={1}
+              initialPositionX={0}
+              initialPositionY={0}
+              minScale={0.5}
+              maxScale={10}
+            >
+              {({ zoomIn, zoomOut, resetTransform }) => (
+                <>
+                  <div className="flex gap-2 mb-2 absolute top-0 right-0">
+                    <button onClick={() => zoomIn()} className="px-3 py-1 bg-gray-600 rounded text-lg">+</button>
+                    <button onClick={() => zoomOut()} className="px-3 py-1 bg-gray-600 rounded text-lg">-</button>
+                    <button onClick={() => resetTransform()} className="px-3 py-1 bg-gray-600 rounded text-sm">بازنشانی</button>
+                  </div>
+                  
+                  <TransformComponent
+                    wrapperStyle={{ width: '100%', height: '500px', cursor: 'grab' }}
+                    contentStyle={{ width: '100%', height: '100%' }}
+                  >
+                    <MetroMap
+                      sourceStationName={sourceStation}
+                      destinationStationName={destinationStation}
+                    />
+                  </TransformComponent>
+                </>
+              )}
+            </TransformWrapper>
+          </div>
+
+          <aside className=''>
+            <div className="grid  grid-cols-3 gap-4 items-center justify-start">
+              <StationSelect
+                label="ایستگاه مقصد"
+                value={destinationStation}
+                onChange={(e) => setDestinationStation(e.target.value)}
+                stations={stations.filter(s => s.name !== sourceStation && !((isHoliday || isOtherHoliday) && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
+              />
+              <div className="flex justify-center P-2">
+                <button
+                  onClick={handleSwap}
+                  className="bg-transparent rounded-full mt-0 md:mt-8 p-2 hover:bg-gray-800 hover:cursor-pointer transition-transform duration-300 transform hover:rotate-180"
+                  title="جابجایی مبدا و مقصد"
+                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 stroke-gray-300" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                </button>
+              </div>
+              <StationSelect
+                label="ایستگاه مبدا"
+                value={sourceStation}
+                onChange={(e) => setSourceStation(e.target.value)}
+                stations={stations.filter(s => s.name !== destinationStation && !((isHoliday || isOtherHoliday) && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
+              />
+            </div>
+          </aside>
+          
+          {/*
+          <div className="w-full max-w-2xl mx-auto">
 
             <div className="bg-gray-700 p-6 rounded-lg shadow-lg rtl">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
@@ -133,10 +194,8 @@ function App() {
               </div>
             </div>
 
-            {/* { <ScheduleDisplay {...upcomingTrains!} /> } */}
             {(
               <div className="mt-8 space-y-8">
-                {/* بخش نقشه با قابلیت زوم */}
                 <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
                   <h2 className="text-xl font-semibold text-cyan-400 mb-4">نقشه شماتیک مسیر</h2>
                   <TransformWrapper
@@ -148,13 +207,12 @@ function App() {
                   >
                     {({ zoomIn, zoomOut, resetTransform }) => (
                       <>
-                        {/* دکمه‌های کنترل زوم */}
                         <div className="flex gap-2 mb-2">
                           <button onClick={() => zoomIn()} className="px-3 py-1 bg-gray-600 rounded text-lg">+</button>
                           <button onClick={() => zoomOut()} className="px-3 py-1 bg-gray-600 rounded text-lg">-</button>
                           <button onClick={() => resetTransform()} className="px-3 py-1 bg-gray-600 rounded text-sm">بازنشانی</button>
                         </div>
-                        {/* کامپوننت اصلی که محتوای نقشه را نگه می‌دارد */}
+                        
                         <TransformComponent
                           wrapperStyle={{ width: '100%', height: '500px', cursor: 'grab' }}
                           contentStyle={{ width: '100%', height: '100%' }}
@@ -169,17 +227,17 @@ function App() {
                   </TransformWrapper>
                 </div>
               
-                {/* بخش نمایش نتایج (که از قبل داشتیم) */}
                 <ScheduleDisplay {...upcomingTrains!} />
               </div>
             )}
 
-            <footer className="text-center text-gray-500 mt-12 text-sm">
-              <p className='rtl font-vazir'>طراحی و توسعه با ❤️ توسط جامعه برای جامعه</p>
-              <p className="mt-1 font-vazir rtl">آخرین بروزرسانی داده‌ها: مهر ۱۴۰۴</p>
-            </footer>
           </div>
+          */}
         </main>
+        <footer className="bg-gray-900 font-vazir text-center text-gray-500 mt-12 text-sm">
+          <p className='rtl font-vazir'>طراحی و توسعه با ❤️ توسط جامعه برای جامعه</p>
+          <p className="mt-1 font-vazir rtl">آخرین بروزرسانی داده‌ها: مهر ۱۴۰۴</p>
+        </footer>
       </>
     );
 }

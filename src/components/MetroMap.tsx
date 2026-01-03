@@ -34,11 +34,11 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
 
   const { highlightedStations, highlightedSegments } = highlightedElements;
 
-  const viewBoxHeight = 860;
+  const viewBoxHeight = 890;
   const viewBoxWidth = 250;
 
   return (
-    <div className="w-full h-[500px] flex justify-center items-center bg-gray-700 rounded-lg overflow-hidden border-2 border-gray-600">
+    <div className="w-full h-[504px] justify-center items-center overflow-hidden">
       <svg
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         width="100%"
