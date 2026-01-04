@@ -26,14 +26,14 @@
 
 .metro-line-bg {
   stroke: #555; /* رنگ خاکستری تیره برای خطی که انتخاب نشده */
-  stroke-width: 6px;
+  stroke-width: 4px;
   stroke-linecap: round;
 }
 
 /* خط هایلایت شده (مسیر انتخابی) */
 .metro-line-highlight {
   stroke: #00bcd4; /* رنگ فیروزه‌ای (شبیه به هدر برنامه) */
-  stroke-width: 8px; /* کمی ضخیم‌تر تا روی خط قبلی را بپوشاند */
+  stroke-width: 6px; /* کمی ضخیم‌تر تا روی خط قبلی را بپوشاند */
   stroke-linecap: round;
   /* انیمیشن برای رسم شدن خط */
   /* stroke-dasharray: 1000;
@@ -50,6 +50,13 @@
   fill: #999; /* رنگ دایره‌های عادی */
   stroke: #555;
   stroke-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.stroke-circle {
+  fill: none;
+  stroke: #b2b2b2;
+  stroke-width: 1px;
   transition: all 0.3s ease;
 }
 
@@ -70,6 +77,7 @@
   font-family: 'Vazirmatn', sans-serif;
   direction: rtl;
   text-anchor: start;
+  font-family: 'Vazir';
 }
 
 /* متن ایستگاه (هایلایت شده) */
@@ -80,6 +88,7 @@
   font-family: 'Vazirmatn', sans-serif;
   direction: rtl;
   text-anchor: start;
+  font-family: 'Vazir';
 }
 
 @theme inline {

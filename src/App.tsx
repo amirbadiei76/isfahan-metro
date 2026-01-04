@@ -10,6 +10,18 @@ import Header from './components/Header';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import MetroMap from './components/MetroMap';
 
+const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371; // شعاع کره زمین به کیلومتر
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // فاصله به کیلومتر
+};
+
+
 
 function App() {
     const [sourceStation, setSourceStation] = useState<string>('');
@@ -19,6 +31,66 @@ function App() {
     const [time, setTime] = useState<string>(getPersianStringTime())
     const [date, setDate] = useState<string>(getPersianStringDate());
     const [isOtherHoliday, setIsOtherHoliday] = useState(false);
+    const [nearestStationId, setNearestStationId] = useState<number | null>(null);
+
+    const findNearest = (lat: number, lon: number) => {
+      let minDistance = Infinity;
+      let closestId = null;
+
+      stations.forEach(station => {
+        const dist = getDistance(lat, lon, station.lat!, station.lon!);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestId = station.id;
+        }
+      });
+
+      // اگر کاربر در محدوده اصفهان باشد (مثلاً فاصله کمتر از 30 کیلومتر تا نزدیکترین ایستگاه)
+      if (minDistance < 30) {
+        setNearestStationId(closestId);
+      }
+    };
+    
+    /*
+    useEffect(() => {
+      // مرحله ۱: تلاش برای گرفتن موقعیت از مرورگر
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            // موفقیت در روش اول
+            findNearest(position.coords.latitude, position.coords.longitude);
+          },
+          async (error) => {
+            // مرحله ۲: اگر خطای تحریم (403) یا هر خطای دیگری رخ داد، برو سراغ IP
+            console.warn("Browser Geolocation failed, trying IP-based location...", error.message);
+            try {
+              const response = await fetch('https://metro-api.vercel.app/ip-location');
+
+              const data = await response.json();
+              console.log(data)
+            
+              if (data && data.latitude && data.longitude) {
+                findNearest(data.latitude, data.longitude);
+              }
+            } catch (ipError) {
+              console.error("IP Geolocation also failed:", ipError);
+            }
+            
+          },
+          // { timeout: 30000 } // حداکثر ۵ ثانیه منتظر مرورگر بمان
+        );
+      }
+    }, []);
+
+    */
+    const handleStationClick = (stationName: string) => {
+      if (!sourceStation || (sourceStation && destinationStation)) {
+        setSourceStation(stationName);
+        setDestinationStation('');
+      } else {
+        setDestinationStation(stationName);
+      }
+    };
 
     useEffect(() => {
       setIsOtherHoliday(false)
@@ -104,14 +176,14 @@ function App() {
         <Header date={date} time={time}  />
         <main className="bg-gray-900 min-h-(--remain-height) flex w-full flex-col md:flex-row p-5 gap-4 text-white font-vazir">
           
-          <div className='flex flex-1 flex-col bg-gray-800 p-4 rounded-lg shadow-lg relative'>
+          <div className='flex w-full flex-1 flex-col bg-gray-800 p-4 rounded-lg shadow-lg relative'>
             <h2 className="text-xl font-semibold text-cyan-400 mb-4">نقشه شماتیک مسیر</h2>
             <TransformWrapper
               initialScale={1}
               initialPositionX={0}
               initialPositionY={0}
-              minScale={0.5}
-              maxScale={10}
+              minScale={1}
+              maxScale={6}
             >
               {({ zoomIn, zoomOut, resetTransform }) => (
                 <>
@@ -128,6 +200,8 @@ function App() {
                     <MetroMap
                       sourceStationName={sourceStation}
                       destinationStationName={destinationStation}
+                      onStationClick={handleStationClick}
+                      nearestStationId={nearestStationId}
                     />
                   </TransformComponent>
                 </>
@@ -136,14 +210,14 @@ function App() {
           </div>
 
           <aside className=''>
-            <div className="grid  grid-cols-3 gap-4 items-center justify-start">
+            <div className="flex w-full md:w-auto gap-4 items-center justify-between">
               <StationSelect
                 label="ایستگاه مقصد"
                 value={destinationStation}
                 onChange={(e) => setDestinationStation(e.target.value)}
                 stations={stations.filter(s => s.name !== sourceStation && !((isHoliday || isOtherHoliday) && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
               />
-              <div className="flex justify-center P-2">
+              <div className="flex justify-center P-2 items-center">
                 <button
                   onClick={handleSwap}
                   className="bg-transparent rounded-full mt-0 md:mt-8 p-2 hover:bg-gray-800 hover:cursor-pointer transition-transform duration-300 transform hover:rotate-180"
@@ -161,6 +235,7 @@ function App() {
                 stations={stations.filter(s => s.name !== destinationStation && !((isHoliday || isOtherHoliday) && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
               />
             </div>
+            <ScheduleDisplay {...upcomingTrains!} />
           </aside>
           
           {/*
