@@ -8,37 +8,54 @@ interface MetroMapProps {
   destinationStationName: string;
   nearestStationId: number | null;
   onStationClick: (name: string) => void;
+  zoomScale: number;
 }
 
 
-const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStationName, nearestStationId, onStationClick }) => {
+const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStationName, nearestStationId, onStationClick, zoomScale }) => {
 
   const highlightedElements = useMemo(() => {
     const source = stations.find(s => s.name === sourceStationName);
     const dest = stations.find(s => s.name === destinationStationName);
+    if (!source || !dest) return { highlightedStations: new Set<number>(), highlightedSegments: new Set<string>(), startIndex: 0, endIndex: 0, isReverse: false };
 
     const highlightedStations = new Set<number>();
     const highlightedSegments = new Set<string>();
 
-    if (source && dest) {
-      const startIndex = Math.min(source.id, dest.id);
-      const endIndex = Math.max(source.id, dest.id);
+    const startIndex = Math.min(source.id, dest.id);
+    const endIndex = Math.max(source.id, dest.id);
 
-      for (let i = startIndex; i <= endIndex; i++) {
-        highlightedStations.add(i);
-       
-        if (i < endIndex) {
-          highlightedSegments.add(`segment-${i}`);
-        }
+    for (let i = startIndex; i <= endIndex; i++) {
+      highlightedStations.add(i);
+      
+      if (i < endIndex) {
+        highlightedSegments.add(`segment-${i}`);
       }
     }
-    return { highlightedStations, highlightedSegments };
+    return { highlightedStations, highlightedSegments, startIndex, endIndex, isReverse: startIndex > endIndex };
   }, [sourceStationName, destinationStationName]);
 
-  const { highlightedStations, highlightedSegments } = highlightedElements;
+  const { highlightedStations, highlightedSegments, endIndex, isReverse, startIndex } = highlightedElements;
+  const bubbleScale = (1 / (zoomScale > 3 ? 3 : zoomScale)) * 2.5;
 
   const viewBoxHeight = 890;
   const viewBoxWidth = 250;
+
+  function generatePath(startId: number, endId: number): string {
+    const segment = stations.filter(s => s.id >= startId && s.id <= endId);
+    if (segment.length === 0) return "";
+    let d = `M${segment[0].x},${segment[0].y}`;
+    for (let i = 0; i < segment.length - 1; i++) {
+      const cur = segment[i];
+      const nxt = segment[i + 1];
+      if (cur.id === 13 && nxt.id === 14) {
+        d += ` Q${nxt.x - 20},${(cur.y + nxt.y) / 2} ${nxt.x},${nxt.y}`;
+      } else {
+        d += ` L${nxt.x},${nxt.y}`;
+      }
+    }
+    return d;
+  }
 
   return (
     <div className="w-full h-[504px] justify-center items-center overflow-hidden">
@@ -50,6 +67,19 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
         height="100%"
         preserveAspectRatio="xMidYMid meet"
         >
+          <defs>
+            {/* تعریف فلش (Arrow Head) */}
+            <marker
+              id="arrowhead"
+              markerWidth="10"
+              markerHeight="7"
+              refX="9"
+              refY="3.5"
+              orient="auto"
+            >
+              <polygon points="0 0, 10 3.5, 0 7" fill="#ffcc00" />
+            </marker>
+          </defs>
         {/* <defs>
           تعریف فیلتر درخشش (Glow) برای نزدیک‌ترین ایستگاه
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
@@ -83,6 +113,34 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
             );
           })}
 
+          {highlightedSegments.size > 0 && (
+            <>
+              {/* <path
+                d={generatePath(Math.min(startIndex + 1, endIndex), Math.max(startIndex, endIndex))}
+                fill="none"
+                stroke="none"
+                strokeWidth="3"
+                strokeLinecap="round"
+                markerEnd={!isReverse ? "url(#arrowhead)" : ""}
+                markerStart={!isReverse ? "url(#arrowhead)" : ""}
+                style={{ transition: 'all 0.3s ease', rotate: isReverse ? "180" : "0" }}
+              /> */}
+              {/* <path
+                d={generatePath(Math.min(startIndex, endIndex), Math.max(startIndex, endIndex))}
+                fill="none"
+                stroke="#ffcc00"
+                strokeWidth="3"
+                strokeLinecap="round"
+                markerEnd={!isReverse ? "url(#arrowhead)" : ""}
+                markerStart={isReverse ? "url(#arrowhead)" : ""}
+                style={{ transition: 'all 0.3s ease' }}
+              /> */}
+            </>
+              
+            )}
+
+            
+
           {stations.slice(0, -1).map((station, index) => {
             const nextStation = stations[index + 1];
             const segmentId = `segment-${station.id}`;
@@ -97,6 +155,7 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
                   y2={nextStation.y}
                   className="metro-line-highlight"
                 />
+                
               );
             }
             return null;
@@ -112,7 +171,7 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
             // const isInPath = highlightInfo.has(station.id);
 
             return (
-              <g onClick={() => onStationClick(station.name)} key={`station-group-${station.id}`} transform={`translate(${station.x}, ${station.y})`}>
+              <g onClick={() => onStationClick(station.name)} className='relative' key={`station-group-${station.id}`} transform={`translate(${station.x}, ${station.y})`}>
                 {isNearest && (
                   <circle
                     cx={station.x} cy={station.y} r="15"
@@ -122,12 +181,15 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
                   />
                 )}
                 
+                
+                
+                
                 <circle
                   cx={0}
                   cy={0}
                   r={isSource || isDest ? "8" : "5"}
                   fill={isSource || isDest ? "#ffcc00" : (isHighlighted ? "#fff" : "#666")}
-                  className={isHighlighted ? "station-circle-highlight" : "station-circle"}
+                  className={isHighlighted || isDest || isSource ? "station-circle-highlight" : "station-circle"}
                 />
                 <text
                   x={station.textX}
@@ -138,6 +200,48 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
                 >
                   {station.name}
                 </text>
+
+                {/* نمایش حباب مبدا یا مقصد */}
+                {(isSource || isDest) && (
+                  <g transform={`translate(0, -5) scale(${bubbleScale})`} className='z-10'>
+                    {/* شکل حباب */}
+                    <path
+                      // d="M -16 -30 H 16 V -10 H 6 L 0 0 L -6 -10 H -16 Z"
+
+                        d="M -10 -30
+                          H 10
+                          Q 16 -30 16 -24
+                          V -16
+                          Q 16 -10 10 -10
+                          L 5 -10
+                          L 0 -5
+                          L -5 -10
+                          Q -16 -10 -16 -16
+                          V -24
+                          Q -16 -30 -10 -30
+                          Z"
+
+                      fill={isSource ? "#00c853" : "#d50000"}
+                      className="drop-shadow-lg"
+                    />
+                    {/* 
+                    d="M -18 -30 H 18 V -10 H 6 L 0 0 L -6 -10 H -18 Z"
+
+                    */}
+                    {/* متن داخل حباب */}
+                    <text
+                      y="-17"
+                      textAnchor="middle"
+                      fill="white"
+                      fontSize="10"
+                      fontWeight="bold"
+                      className="select-none"
+                      style={{ pointerEvents: 'none' }}
+                    >
+                      {isSource ? "مبدا" : "مقصد"}
+                    </text>
+                  </g>
+                )}
               </g>
             );
           })}

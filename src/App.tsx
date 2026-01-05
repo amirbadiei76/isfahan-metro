@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
-import type { ResultTime, ScheduleResult } from './components/ScheduleDisplay';
+import type { ResultTime, ScheduleResult, TripInfo } from './components/ScheduleDisplay';
 import { stations } from './data/stations';
 import { schedule } from './data/schedule';
 import StationSelect from './components/StationSelect';
@@ -34,6 +34,8 @@ function App() {
     const [date, setDate] = useState<string>(getPersianStringDate());
     const [isOtherHoliday, setIsOtherHoliday] = useState(false);
     const [nearestStationId, setNearestStationId] = useState<number | null>(null);
+
+    const [zoomScale, setZoomScale] = useState(1.3);
     
     /*
     const findNearest = (lat: number, lon: number) => {
@@ -53,45 +55,62 @@ function App() {
         setNearestStationId(closestId);
       }
     };
-    
+    */
     
     useEffect(() => {
-      // مرحله ۱: تلاش برای گرفتن موقعیت از مرورگر
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            // موفقیت در روش اول
-            findNearest(position.coords.latitude, position.coords.longitude);
-          },
-          async (error) => {
-            // مرحله ۲: اگر خطای تحریم (403) یا هر خطای دیگری رخ داد، برو سراغ IP
-            console.warn("Browser Geolocation failed, trying IP-based location...", error.message);
-            try {
-              const response = await fetch('https://metro-api.vercel.app/ip-location');
+    //   if (!navigator.geolocation) {
+    //     console.log("Geolocation not supported");
+    //     return;
+    //   }
+      
+    //    navigator.geolocation.getCurrentPosition(
+    //     (position) => {
+    //       console.log(position)
+    //           // موفقیت در روش اول
+    //           findNearest(position.coords.latitude, position.coords.longitude);
+    //         },
+    //     (err) => {
+    //       console.log(err.message);
+    //   },
+    // );
 
-              const data = await response.json();
-              console.log(data)
+      // مرحله ۱: تلاش برای گرفتن موقعیت از مرورگر
+      // if ("geolocation" in navigator) {
+      //   navigator.geolocation.getCurrentPosition(
+      //     (position) => {
+      //       // موفقیت در روش اول
+      //       findNearest(position.coords.latitude, position.coords.longitude);
+      //     },
+          // async (error) => {
+          //   // مرحله ۲: اگر خطای تحریم (403) یا هر خطای دیگری رخ داد، برو سراغ IP
+          //   console.warn("Browser Geolocation failed, trying IP-based location...", error.message);
+          //   try {
+          //     const response = await fetch('https://metro-api.vercel.app/ip-location');
+
+          //     const data = await response.json();
+          //     console.log(data)
             
-              if (data && data.latitude && data.longitude) {
-                findNearest(data.latitude, data.longitude);
-              }
-            } catch (ipError) {
-              console.error("IP Geolocation also failed:", ipError);
-            }
+          //     if (data && data.latitude && data.longitude) {
+          //       findNearest(data.latitude, data.longitude);
+          //     }
+          //   } catch (ipError) {
+          //     console.error("IP Geolocation also failed:", ipError);
+          //   }
             
-          },
+          // },
           // { timeout: 30000 } // حداکثر ۵ ثانیه منتظر مرورگر بمان
-        );
-      }
+      //   );
+      // }
     }, []);
-    */
+    
 
     const handleStationClick = (stationName: string) => {
       if (!sourceStation || (sourceStation && destinationStation)) {
         setSourceStation(stationName);
         setDestinationStation('');
       } else {
-        setDestinationStation(stationName);
+        
+        setDestinationStation(sourceStation !== stationName ? stationName : '');
       }
       setNearestStationId(-1);
     };
@@ -132,11 +151,63 @@ function App() {
         const directionText = `مسیر: ${source.name} به سمت ${destination.name}`;
 
         if (!allArrivals || !allDepartures) {
-          return { isHoliday: (isHoliday! || isOtherHoliday), dayType: dayType, results: [], directionText: directionText, sourceStationName: '' };
+          return { isHoliday: (isHoliday! || isOtherHoliday), dayType: dayType, results: [], directionText: directionText, sourceStationName: '', destinationStationName: '', nextDepartureTime: '', trips: [] };
         }
 
         
         const now = today!.getHours() * 60 + today!.getMinutes();
+
+        let nextTrainIndex = -1;
+        let nextDepartureTime = '';
+
+        for (let i = 0; i < allDepartures.length; i++) {
+          const time = allDepartures[i];
+          const [hour, minute] = time.split(':').map(Number);
+          if ((hour * 60 + minute) >= now) {
+            nextTrainIndex = i; // ایندکس قطار مورد نظر ما پیدا شد
+            nextDepartureTime = time;
+            break;
+          }
+        }
+
+        // 3. اگر قطاری پیدا نشد (آخرین قطار رفته است)
+        if (nextTrainIndex === -1) {
+          return {
+            dayType: isHoliday ? 'ایام تعطیل' : 'روزهای کاری',
+            directionText: directionText,
+            sourceStationName: source.name,
+            destinationStationName: destination.name,
+            trips: [], // سفر خالی
+            nextDepartureTime: '', // قطاری وجود ندارد
+            isHoliday: isHoliday,
+            results: []
+          };
+        }
+
+        // 4. ساختن لیست سفر (Trip)
+        const trips: TripInfo[] = [];
+
+        // 4a. پیدا کردن تمام ایستگاه‌های بین مبدا و مقصد
+        const startIndex = Math.min(source.id, destination.id);
+        const endIndex = Math.max(source.id, destination.id);
+        let tripStations = stations.filter(s => s.id >= startIndex && s.id <= endIndex);
+
+        // 4b. اگر مسیر برگشت بود، ترتیب آرایه را معکوس کن تا درست نمایش داده شود
+        if (source.id > destination.id) {
+          tripStations.reverse();
+        }
+        // 4c. برای هر ایستگاه در سفر، زمان رسیدن را با استفاده از `nextTrainIndex` استخراج کن
+        for (const station of tripStations) {
+          const stationSchedule = schedule[dayTypeKey][directionKey][station.name];
+          if (stationSchedule && stationSchedule[nextTrainIndex]) {
+            trips.push({
+              stationName: station.name,
+              arrivalTime: stationSchedule[nextTrainIndex],
+            });
+          }
+        }
+
+
         const upcomingDepartures = allDepartures.filter(time => {
           const [hour, minute] = time.split(':').map(Number);
           return (hour * 60 + minute) >= now;
@@ -167,6 +238,10 @@ function App() {
           results: results.slice(0, 5),
           directionText: directionText,
           sourceStationName: source.name,
+          destinationStationName: destination.name,
+          trips: trips,
+          nextDepartureTime: nextDepartureTime
+
         };
     }, [sourceStation, destinationStation, isOtherHoliday]);
 
@@ -184,8 +259,9 @@ function App() {
             <h2 className="text-xl font-semibold text-cyan-400 mb-4">نقشه شماتیک مسیر</h2>
             <TransformWrapper
               initialScale={1.3}
-              initialPositionX={-70}
-              initialPositionY={-100}
+              onTransformed={(ref) => setZoomScale(ref.state.scale)}
+              initialPositionX={-80}
+              initialPositionY={-75}
               minScale={1}
               maxScale={6}
             >
@@ -206,6 +282,7 @@ function App() {
                       destinationStationName={destinationStation}
                       onStationClick={handleStationClick}
                       nearestStationId={nearestStationId}
+                      zoomScale={zoomScale}
                     />
                   </TransformComponent>
                 </>
