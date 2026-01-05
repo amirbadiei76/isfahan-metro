@@ -3,15 +3,19 @@ import React from 'react'
 export default function IsfahanStreets() {
   return (
     <g>
-      <g transform='translate(-291, 576)'>
+      <g transform='translate(-291, 476)'>
+        
           {/* <circle
             cx={400}
             cy={12.5}
             r={3}
             className={"stroke-circle"}
           /> */}
+          {/* <path stroke='#dfdfdf'
+          d='M 110, 320 L 120 120 Q 80 80 L 230 200' /> */}
+          
       </g>
-      <g transform='translate(-291, 576) scale(1.55)'>
+      <g transform='translate(-291, 476) scale(1.55)'>
         <path
             d="
                 M 0 0

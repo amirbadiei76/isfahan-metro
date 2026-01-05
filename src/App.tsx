@@ -11,14 +11,14 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import MetroMap from './components/MetroMap';
 
 const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-  const R = 6371; // شعاع کره زمین به کیلومتر
+  const R = 6371;
   const dLat = (lat2 - lat1) * (Math.PI / 180);
   const dLon = (lon2 - lon1) * (Math.PI / 180);
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // فاصله به کیلومتر
+  return R * c;
 };
 
 
@@ -81,8 +81,8 @@ function App() {
         );
       }
     }, []);
-
     */
+
     const handleStationClick = (stationName: string) => {
       if (!sourceStation || (sourceStation && destinationStation)) {
         setSourceStation(stationName);
@@ -179,9 +179,9 @@ function App() {
           <div className='flex w-full flex-1 flex-col bg-gray-800 p-4 rounded-lg shadow-lg relative'>
             <h2 className="text-xl font-semibold text-cyan-400 mb-4">نقشه شماتیک مسیر</h2>
             <TransformWrapper
-              initialScale={1}
-              initialPositionX={0}
-              initialPositionY={0}
+              initialScale={1.3}
+              initialPositionX={-300}
+              initialPositionY={-450}
               minScale={1}
               maxScale={6}
             >
@@ -194,7 +194,7 @@ function App() {
                   </div>
                   
                   <TransformComponent
-                    wrapperStyle={{ width: '100%', height: '500px', cursor: 'grab' }}
+                    wrapperStyle={{ width: '100%', height: '100%', cursor: 'grab' }}
                     contentStyle={{ width: '100%', height: '100%' }}
                   >
                     <MetroMap

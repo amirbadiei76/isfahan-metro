@@ -42,13 +42,6 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
 
   return (
     <div className="w-full h-[504px] justify-center items-center overflow-hidden">
-      {/* <defs>
-        تعریف فیلتر درخشش (Glow) برای نزدیک‌ترین ایستگاه
-        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="4" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-      </defs> */}
 
 
       <svg
@@ -56,16 +49,26 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
         width="100%"
         height="100%"
         preserveAspectRatio="xMidYMid meet"
-      >
+        >
+        {/* <defs>
+          تعریف فیلتر درخشش (Glow) برای نزدیک‌ترین ایستگاه
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs> */}
+
         {/* <g stroke="#333" strokeWidth="1" fill="none">
           <path d="M50,200 L450,200 M50,400 L450,400 M100,50 L100,1000 M400,50 L400,1000" />
           <path d="M50,750 Q250,700 450,750" opacity="0.5" />
         </g> */}
 
         
+
+        
         <IsfahanStreets />
 
-        <g>
+        <g transform='translate(0, -100)'>
           {stations.slice(0, -1).map((station, index) => {
             const nextStation = stations[index + 1];
             return (
