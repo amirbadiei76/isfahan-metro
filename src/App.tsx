@@ -180,8 +180,8 @@ function App() {
             <h2 className="text-xl font-semibold text-cyan-400 mb-4">نقشه شماتیک مسیر</h2>
             <TransformWrapper
               initialScale={1.3}
-              initialPositionX={-300}
-              initialPositionY={-450}
+              initialPositionX={-70}
+              initialPositionY={-100}
               minScale={1}
               maxScale={6}
             >
