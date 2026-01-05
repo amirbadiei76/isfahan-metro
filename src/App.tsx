@@ -10,6 +10,7 @@ import Header from './components/Header';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import MetroMap from './components/MetroMap';
 
+/*
 const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const R = 6371;
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -20,6 +21,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
+*/
 
 
 
@@ -32,7 +34,8 @@ function App() {
     const [date, setDate] = useState<string>(getPersianStringDate());
     const [isOtherHoliday, setIsOtherHoliday] = useState(false);
     const [nearestStationId, setNearestStationId] = useState<number | null>(null);
-
+    
+    /*
     const findNearest = (lat: number, lon: number) => {
       let minDistance = Infinity;
       let closestId = null;
@@ -51,7 +54,7 @@ function App() {
       }
     };
     
-    /*
+    
     useEffect(() => {
       // مرحله ۱: تلاش برای گرفتن موقعیت از مرورگر
       if ("geolocation" in navigator) {
@@ -90,6 +93,7 @@ function App() {
       } else {
         setDestinationStation(stationName);
       }
+      setNearestStationId(-1);
     };
 
     useEffect(() => {
