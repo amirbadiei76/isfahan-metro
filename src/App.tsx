@@ -32,7 +32,6 @@ function App() {
     const [date, setDate] = useState<string>(getPersianStringDate());
     const [isOtherHoliday, setIsOtherHoliday] = useState(false);
     const [nearestStationId, setNearestStationId] = useState<number | null>(null);
-
     const [zoomScale, setZoomScale] = useState(1.3);
     
     
@@ -330,7 +329,8 @@ function App() {
                 stations={stations.filter(s => s.name !== destinationStation && !((isHoliday || isOtherHoliday) && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
               />
             </div>
-            <ScheduleDisplay {...upcomingTrains!} />
+            
+              <ScheduleDisplay {...upcomingTrains!} />
           </aside>
           
           {/*

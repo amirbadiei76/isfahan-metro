@@ -1,3 +1,4 @@
+import { Activity, useState } from "react";
 
 export interface ResultTime {
     departure: string,
@@ -23,6 +24,9 @@ export interface ScheduleResult {
 
 export default function ScheduleDisplay ({ dayType, results, directionText, sourceStationName, nextDepartureTime, trips }: ScheduleResult) {
 
+    
+    const [showLineTab, setShowLineTab] = useState(false);
+
     if (!trips || trips.length === 0) {
         return (
         <div className="mt-8 bg-gray-800 p-6 rounded-lg shadow-lg animate-fade-in">
@@ -31,7 +35,7 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
             <p className="text-sm text-gray-400">برنامه امروز ({dayType})</p>
             </div>
             <div className="text-center py-8">
-            <p className="text-yellow-400 text-lg">
+            <p className="text-yellow-400 text-lg rtl">
                 متاسفانه قطار دیگری برای امروز از این ایستگاه وجود ندارد.
             </p>
             </div>
@@ -40,7 +44,13 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
     }
     
     return (
-        <div className="mt-8 w-full md:max-w-90 bg-blue-400 p-6 rounded-lg shadow-lg animate-fade-in rtl">
+        <div className="mt-8 w-full md:max-w-80 bg-blue-400 p-6 rounded-lg shadow-lg animate-fade-in rtl">
+            
+            <div className='flex gap-2'>
+                <button onClick={() => setShowLineTab(true)}>Show Line</button>
+                <button onClick={() => setShowLineTab(false)}>Show Schedule</button>
+            </div>
+
             <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
             <div>
                 <h2 className="text-xl font-semibold text-cyan-500">{directionText}</h2>
@@ -49,7 +59,9 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
             </div>
     
             {results && results.length > 0 ? (
-                <>
+                
+                <div >
+                    {   !showLineTab &&
                     <div>
                         <p className="mb-4 rtl text-gray-700 font-vazir">
                         {results.length} حرکت بعدی از ایستگاه <strong className="text-yellow-600 font-vazir">{sourceStationName}</strong>:
@@ -71,7 +83,9 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
                             }
                         </div>
                     </div>
+                    }
                     {/* لیست زمان‌بندی سفر */}
+                    {   showLineTab &&
                     <div className="relative pl-4">
                         <div className="mb-4 border-b border-gray-600 pb-3">
                             <h2 className="text-xl font-semibold text-cyan-400">{directionText}</h2>
@@ -105,7 +119,8 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
                         ))}
                         </ul>
                     </div>
-                </>
+                    }
+                </div>
             ) : (
             <div className="text-center py-8">
                 <p className="text-yellow-400 text-lg rtl">
