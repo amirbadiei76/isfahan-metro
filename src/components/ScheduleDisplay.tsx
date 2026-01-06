@@ -21,7 +21,7 @@ export interface ScheduleResult {
     nextDepartureTime: string;
 }
 
-export default function ScheduleDisplay ({ dayType, results, directionText, sourceStationName, destinationStationName, isHoliday, nextDepartureTime, trips }: ScheduleResult) {
+export default function ScheduleDisplay ({ dayType, results, directionText, sourceStationName, nextDepartureTime, trips }: ScheduleResult) {
 
     if (!trips || trips.length === 0) {
         return (

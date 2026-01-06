@@ -32,7 +32,7 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
         highlightedSegments.add(`segment-${i}`);
       }
     }
-    return { highlightedStations, highlightedSegments, startIndex, endIndex, isReverse: startIndex > endIndex };
+    return { highlightedStations, highlightedSegments, startIndex: source.id, endIndex: dest.id, isReverse: source.id > dest.id };
   }, [sourceStationName, destinationStationName]);
 
   const { highlightedStations, highlightedSegments, endIndex, isReverse, startIndex } = highlightedElements;
@@ -191,6 +191,23 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
                   fill={isSource || isDest ? "#ffcc00" : (isHighlighted ? "#fff" : "#666")}
                   className={isHighlighted || isDest || isSource ? "station-circle-highlight" : "station-circle"}
                 />
+                    
+                <path
+                // ${(station.id > stations.length - 1) ? 'hidden' : 'block'} 
+                    className={`${(isReverse && station.id !== startIndex - 1 && station.id !== endIndex) || (!isReverse && station.id !== startIndex && station.id !== endIndex - 1) ? 'hidden' : 'block'}`}
+                    d="
+                       M -6 0
+                      Q 0 3 6 0
+                      L 0 8
+                      Z
+                    "
+                    fill="#00bcd4"
+                    transform={`translate(${station.arrowX}, ${station.arrowY}) scale(1.3) rotate(${isReverse ? (station.arrowRotation + 180) : station.arrowRotation })`}
+                    stroke={"#00bcd4"}
+                    strokeWidth="2"
+                    strokeLinecap="square"
+                    strokeMiterlimit={10}
+                />
                 <text
                   x={station.textX}
                   y={station.textY}
@@ -224,16 +241,13 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
                       fill={isSource ? "#00c853" : "#d50000"}
                       className="drop-shadow-lg"
                     />
-                    {/* 
-                    d="M -18 -30 H 18 V -10 H 6 L 0 0 L -6 -10 H -18 Z"
 
-                    */}
                     {/* متن داخل حباب */}
                     <text
                       y="-17"
                       textAnchor="middle"
                       fill="white"
-                      fontSize="10"
+                      fontSize="11"
                       fontWeight="bold"
                       className="select-none"
                       style={{ pointerEvents: 'none' }}

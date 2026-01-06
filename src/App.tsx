@@ -10,7 +10,6 @@ import Header from './components/Header';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import MetroMap from './components/MetroMap';
 
-/*
 const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
   const R = 6371;
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -21,7 +20,6 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
-*/
 
 
 
@@ -37,25 +35,26 @@ function App() {
 
     const [zoomScale, setZoomScale] = useState(1.3);
     
-    /*
+    
     const findNearest = (lat: number, lon: number) => {
       let minDistance = Infinity;
       let closestId = null;
 
       stations.forEach(station => {
-        const dist = getDistance(lat, lon, station.lat!, station.lon!);
+        const dist = getDistance(lat, lon, station.lat, station.lon);
         if (dist < minDistance) {
           minDistance = dist;
           closestId = station.id;
+          console.log(lat, lon, " | ", station.lat, station.lon, station.name, station.id, minDistance)
         }
       });
-
+      console.log(closestId, minDistance)
       // اگر کاربر در محدوده اصفهان باشد (مثلاً فاصله کمتر از 30 کیلومتر تا نزدیکترین ایستگاه)
       if (minDistance < 30) {
         setNearestStationId(closestId);
       }
     };
-    */
+    
     
     useEffect(() => {
     //   if (!navigator.geolocation) {
@@ -74,6 +73,21 @@ function App() {
     //   },
     // );
 
+      // fetch('https://api64.ipify.org?format=json')
+      // .then((res) => res.json())
+      // .then((data) => {
+      //   console.log(data)
+      //   fetch(`https://ipwho.is/${data.ip}`)
+      //   .then((res) => res.json())
+      //   .then((data) => {
+      //     console.log(data)
+      //     findNearest(data.latitude, data.longitude);
+      //   })
+      // })
+
+      // fetch('https://geolocation-db.com/json/')
+      // .then((res) => res.json())
+      // .then((data) => findNearest(data.latitude, data.longitude))
       // مرحله ۱: تلاش برای گرفتن موقعیت از مرورگر
       // if ("geolocation" in navigator) {
       //   navigator.geolocation.getCurrentPosition(
@@ -99,7 +113,7 @@ function App() {
             
           // },
           // { timeout: 30000 } // حداکثر ۵ ثانیه منتظر مرورگر بمان
-      //   );
+        // );
       // }
     }, []);
     
