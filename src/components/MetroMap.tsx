@@ -9,10 +9,11 @@ interface MetroMapProps {
   nearestStationId: number | null;
   onStationClick: (name: string) => void;
   zoomScale: number;
+  isHoliday: boolean
 }
 
 
-const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStationName, nearestStationId, onStationClick, zoomScale }) => {
+const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStationName, nearestStationId, onStationClick, zoomScale, isHoliday }) => {
 
   const highlightedElements = useMemo(() => {
     const source = stations.find(s => s.name === sourceStationName);
@@ -80,13 +81,13 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
               <polygon points="0 0, 10 3.5, 0 7" fill="#ffcc00" />
             </marker>
           </defs>
-        {/* <defs>
+        <defs>
           تعریف فیلتر درخشش (Glow) برای نزدیک‌ترین ایستگاه
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="4" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
-        </defs> */}
+        </defs>
 
         {/* <g stroke="#333" strokeWidth="1" fill="none">
           <path d="M50,200 L450,200 M50,400 L450,400 M100,50 L100,1000 M400,50 L400,1000" />
@@ -171,15 +172,8 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
             // const isInPath = highlightInfo.has(station.id);
 
             return (
-              <g onClick={() => onStationClick(station.name)} className='relative' key={`station-group-${station.id}`} transform={`translate(${station.x}, ${station.y})`}>
-                {isNearest && (
-                  <circle
-                    cx={station.x} cy={station.y} r="15"
-                    fill="#00ccff" fillOpacity="0.3"
-                    filter="url(#glow)"
-                    className="animate-pulse"
-                  />
-                )}
+              <g onClick={() => (station.id === 2 || station.id === 3 || station.id === 17 || station.id === 18) && isHoliday ? {} : onStationClick(station.name)} className='relative' key={`station-group-${station.id}`} transform={`translate(${station.x}, ${station.y})`}>
+                
                 
                 
                 
@@ -188,8 +182,9 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
                   cx={0}
                   cy={0}
                   r={isSource || isDest ? "8" : "5"}
-                  fill={isSource || isDest ? "#ffcc00" : (isHighlighted ? "#fff" : "#666")}
-                  className={isHighlighted || isDest || isSource ? "station-circle-highlight" : "station-circle"}
+                  strokeOpacity={(station.id === 2 || station.id === 3 || station.id === 17 || station.id === 18) && isHoliday ? 0.35 : 1}
+                  fill={(station.id === 2 || station.id === 3 || station.id === 17 || station.id === 18) && isHoliday ? (isHighlighted ? '#00bcd4' : '#666') : isSource || isDest ? "#ffcc00" : (isHighlighted ? "#fff" : "#666")}
+                  className={(station.id === 2 || station.id === 3 || station.id === 17 || station.id === 18) && isHoliday ? '' : (isHighlighted || isDest || isSource ? "station-circle-highlight" : "station-circle")}
                 />
                     
                 <path
@@ -255,6 +250,17 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
                       {isSource ? "مبدا" : "مقصد"}
                     </text>
                   </g>
+                )}
+                {isNearest && (
+                  <circle
+                    cx={0}
+                    cy={0}
+                    r={"7"}
+                    fillOpacity="0.3"
+                    fill="#00ccff"
+                    filter="url(#glow)"
+                    className={"animate-pulse"}
+                  />
                 )}
               </g>
             );

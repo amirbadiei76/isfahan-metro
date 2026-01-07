@@ -13,6 +13,25 @@ export const getPersianStringTime = () => {
     return today.getHours().toString().padStart(2, '0') + ":" + today.getMinutes().toString().padStart(2, '0') + ":" + today.getSeconds().toString().padStart(2, '0');
 }
 
+export const getCurrentYear = () => {
+    const date = new Date();
+    const faDate = new Intl.DateTimeFormat("fa-IR-u-nu-latn", {
+        year: "numeric",
+        timeZone: 'Asia/Tehran'
+    }).format(date)
+    return faDate;
+}
+
+export const getFormatedDate = () => {
+    const date = new Date();
+    const faDate = new Intl.DateTimeFormat("fa-IR-u-nu-latn", {
+        year: "numeric",
+        month: 'numeric',
+        day: 'numeric',
+        timeZone: 'Asia/Tehran'
+    }).format(date).replaceAll('/', '-')
+    return faDate;
+}
 
 export const getPersianStringDate = () => {
     const date = new Date();

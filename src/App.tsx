@@ -5,7 +5,7 @@ import { stations } from './data/stations';
 import { schedule } from './data/schedule';
 import StationSelect from './components/StationSelect';
 import ScheduleDisplay from './components/ScheduleDisplay';
-import { getPersianStringDate, getPersianStringTime, getTodayTime, todayIsHoliday } from './utils/dateUtils';
+import { getCurrentYear, getFormatedDate, getPersianStringDate, getPersianStringTime, getTodayTime, todayIsHoliday } from './utils/dateUtils';
 import Header from './components/Header';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import MetroMap from './components/MetroMap';
@@ -49,29 +49,104 @@ function App() {
       });
       console.log(closestId, minDistance)
       // اگر کاربر در محدوده اصفهان باشد (مثلاً فاصله کمتر از 30 کیلومتر تا نزدیکترین ایستگاه)
-      if (minDistance < 30) {
+      if (minDistance < 2) {
         setNearestStationId(closestId);
       }
     };
     
-    
-    useEffect(() => {
-    //   if (!navigator.geolocation) {
-    //     console.log("Geolocation not supported");
-    //     return;
-    //   }
-      
-    //    navigator.geolocation.getCurrentPosition(
-    //     (position) => {
-    //       console.log(position)
-    //           // موفقیت در روش اول
-    //           findNearest(position.coords.latitude, position.coords.longitude);
-    //         },
-    //     (err) => {
-    //       console.log(err.message);
-    //   },
-    // );
+    function setTodayIsHoliday (data: {date: string, events: { is_holiday: boolean, description: string }[]}[]) {
 
+      const formatedDate = getFormatedDate();
+      for(const currentDate of data) {
+        if (currentDate.date === formatedDate) {
+          setIsHoliday(true)
+          break
+        }
+      }
+    }
+
+    useEffect(() => {
+      fetch(`https://raw.githubusercontent.com/hasan-ahani/shamsi-holidays/main/holidays/${getCurrentYear()}.json`)
+      .then(response => response.json())
+      .then(data => setTodayIsHoliday(data));
+    }, [getCurrentYear])
+
+
+    useEffect(() => {
+
+
+      let watchId: number;
+      // console.log(formatedDate)
+
+      if ("geolocation" in navigator) {
+        // مرحله ۱: ردیابی لحظه‌ای با watchPosition
+        // console.log(navigator.geolocation.getCurrentPosition((pos) => console.log(pos)))
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            findNearest(latitude, longitude);
+            console.log("Position updated:", latitude, longitude);
+          },
+          async (error) => {
+            // console.warn("GPS tracking error, trying IP-based location...", error.message);
+            // // Fallback به IP (فقط یک‌بار در صورت خطای GPS)
+            // try {
+            //   const response = await fetch('https://freeipapi.com/api/json');
+            //   const data = await response.json();
+            //   if (data?.latitude) findNearest(data.latitude, data.longitude);
+            // } catch (e) { console.error(e); }
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 50000
+          }
+        );
+      }
+
+      // --- بسیار مهم: پاکسازی (Cleanup) موقع خروج از برنامه ---
+      return () => {
+        if (watchId) navigator.geolocation.clearWatch(watchId);
+      };
+      // if ("geolocation" in navigator) {
+      //   console.log(navigator)
+      //   console.log(navigator.geolocation.getCurrentPosition((pos) => console.log(pos)))
+      //   /* geolocation is available */
+      // } else {
+      //   /* geolocation IS NOT available */
+      // }
+      // if (!navigator.geolocation) {
+      //   console.log("Geolocation not supported");
+      //   return;
+      // }
+      
+      //   console.log(navigator.geolocation)
+      //   try {
+      //     navigator.geolocation.watchPosition(
+      //       (position) => {
+      //         console.log(position)
+      //             findNearest(position.coords.latitude, position.coords.longitude);
+      //           },
+      //       (err) => {
+      //         // console.log(err.message);
+      //       },
+      //     );
+      //   }
+      //   catch(e) {
+
+      //   }
+
+        // fetch('https://metro-api.vercel.app/api/')
+        // .then((res) => res.json())
+        // .then((data) => console.log(data))
+        // fetch("https://metro-api-yl9e.onrender.com/", {
+        //   method: "GET",
+        // })
+        // .then(res => {
+        //   if (!res.ok) throw new Error(res.statusText);
+        //   return res.json();
+        // })
+        // .then(console.log)
+        // .catch(console.error);
       // fetch('https://api64.ipify.org?format=json')
       // .then((res) => res.json())
       // .then((data) => {
@@ -89,12 +164,12 @@ function App() {
       // .then((data) => findNearest(data.latitude, data.longitude))
       // مرحله ۱: تلاش برای گرفتن موقعیت از مرورگر
       // if ("geolocation" in navigator) {
-      //   navigator.geolocation.getCurrentPosition(
+      //   navigator.geolocation.watchPosition(
       //     (position) => {
       //       // موفقیت در روش اول
       //       findNearest(position.coords.latitude, position.coords.longitude);
       //     },
-          // async (error) => {
+      //     async (error) => {
           //   // مرحله ۲: اگر خطای تحریم (403) یا هر خطای دیگری رخ داد، برو سراغ IP
           //   console.warn("Browser Geolocation failed, trying IP-based location...", error.message);
           //   try {
@@ -125,7 +200,6 @@ function App() {
         
         setDestinationStation(sourceStation !== stationName ? stationName : '');
       }
-      setNearestStationId(-1);
     };
 
     useEffect(() => {
@@ -135,18 +209,17 @@ function App() {
           const time = getPersianStringTime()
           const date = getPersianStringDate();
           const today = getTodayTime();
-          const isHoliday = todayIsHoliday()
 
           setToday(today)
-          setIsHoliday(isHoliday)
           setTime(time)
           setDate(date)
       }, 1000);
     }, [])
 
     const upcomingTrains = useMemo((): ScheduleResult | null => {
+        const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
         if (!sourceStation || !destinationStation || sourceStation === destinationStation) {
-          return null;
+          return { isHoliday: (isHoliday! || isOtherHoliday), dayType: dayType, results: [], directionText: '', sourceStationName: '', destinationStationName: '', nextDepartureTime: '', trips: [] };
         }
 
         const source = stations.find(s => s.name === sourceStation);
@@ -160,7 +233,7 @@ function App() {
         const allDepartures = schedule[dayTypeKey][directionKey][sourceStation];
         const allArrivals = schedule[dayTypeKey][directionKey][destinationStation];
 
-        const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
+        // const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
         const directionText = `مسیر: ${source.name} به سمت ${destination.name}`;
 
         if (!allArrivals || !allDepartures) {
@@ -247,7 +320,7 @@ function App() {
 
         return {
           isHoliday: (isHoliday! || isOtherHoliday),
-          dayType: dayType,
+          dayType: isHoliday ? 'ایام تعطیل' : 'روزهای کاری',
           results: results.slice(0, 5),
           directionText: directionText,
           sourceStationName: source.name,
@@ -296,6 +369,7 @@ function App() {
                       onStationClick={handleStationClick}
                       nearestStationId={nearestStationId}
                       zoomScale={zoomScale}
+                      isHoliday={isHoliday || isOtherHoliday}
                     />
                   </TransformComponent>
                 </>
@@ -304,7 +378,7 @@ function App() {
           </div>
 
           <aside className=''>
-            <div className="flex w-full md:w-auto gap-4 items-center justify-between">
+            <div className="flex w-full md:w-auto gap-4 items-center justify-between mb-3">
               <StationSelect
                 label="ایستگاه مقصد"
                 value={destinationStation}
@@ -329,8 +403,13 @@ function App() {
                 stations={stations.filter(s => s.name !== destinationStation && !((isHoliday || isOtherHoliday) && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
               />
             </div>
+
+            <div className='flex gap-2 justify-end items-center w-full'>
+              <label className='rtl font-vazir' htmlFor="check_holiday">تعطیلی؟</label>
+              <input id='check_holiday' checked={isOtherHoliday} onChange={(event) => setIsOtherHoliday(event.target.checked)} type="checkbox" />
+            </div>
             
-              <ScheduleDisplay {...upcomingTrains!} />
+            <ScheduleDisplay {...upcomingTrains!} />
           </aside>
           
           {/*

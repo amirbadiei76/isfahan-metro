@@ -47,13 +47,13 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
         <div className="mt-8 w-full md:max-w-80 bg-blue-400 p-6 rounded-lg shadow-lg animate-fade-in rtl">
             
             <div className='flex gap-2'>
-                <button onClick={() => setShowLineTab(true)}>Show Line</button>
-                <button onClick={() => setShowLineTab(false)}>Show Schedule</button>
+                <button onClick={() => setShowLineTab(true)} className="cursor-pointer bg-blue-800 rounded-lg text-white px-2 py-1">Show Line</button>
+                <button onClick={() => setShowLineTab(false)} className="cursor-pointer bg-blue-800 rounded-lg text-white px-2 py-1">Show Schedule</button>
             </div>
 
             <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
             <div>
-                <h2 className="text-xl font-semibold text-cyan-500">{directionText}</h2>
+                <h2 className="text-xl font-semibold text-cyan-900">{directionText}</h2>
                 { dayType && <p className="text-sm text-blue-800">برنامه امروز ({dayType})</p> }
             </div>
             </div>
@@ -87,14 +87,6 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
                     {/* لیست زمان‌بندی سفر */}
                     {   showLineTab &&
                     <div className="relative pl-4">
-                        <div className="mb-4 border-b border-gray-600 pb-3">
-                            <h2 className="text-xl font-semibold text-cyan-400">{directionText}</h2>
-                            <p className="text-sm text-gray-400 mb-2">برنامه امروز ({dayType})</p>
-                            <p className="text-lg text-white">
-                            اولین حرکت از <strong className="text-yellow-400">{sourceStationName}</strong>:
-                            <span className="text-2xl font-bold font-vazir ml-2 text-yellow-300">{nextDepartureTime}</span>
-                            </p>
-                        </div>
                         {/* خط عمودی تایم‌لاین */}
                         <div className="absolute right-26.5 top-0 bottom-0 w-0.5 bg-gray-600" style={{ left: '2.3rem' }}></div>
                     
