@@ -42,22 +42,6 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
   const viewBoxHeight = 890;
   const viewBoxWidth = 250;
 
-  function generatePath(startId: number, endId: number): string {
-    const segment = stations.filter(s => s.id >= startId && s.id <= endId);
-    if (segment.length === 0) return "";
-    let d = `M${segment[0].x},${segment[0].y}`;
-    for (let i = 0; i < segment.length - 1; i++) {
-      const cur = segment[i];
-      const nxt = segment[i + 1];
-      if (cur.id === 13 && nxt.id === 14) {
-        d += ` Q${nxt.x - 20},${(cur.y + nxt.y) / 2} ${nxt.x},${nxt.y}`;
-      } else {
-        d += ` L${nxt.x},${nxt.y}`;
-      }
-    }
-    return d;
-  }
-
   return (
     <div className="w-full h-[504px] justify-center items-center overflow-hidden">
 

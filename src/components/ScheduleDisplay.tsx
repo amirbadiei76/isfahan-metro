@@ -1,4 +1,4 @@
-import { Activity, useState } from "react";
+import { useState } from "react";
 
 export interface ResultTime {
     departure: string,
@@ -22,7 +22,7 @@ export interface ScheduleResult {
     nextDepartureTime: string;
 }
 
-export default function ScheduleDisplay ({ dayType, results, directionText, sourceStationName, nextDepartureTime, trips }: ScheduleResult) {
+export default function ScheduleDisplay ({ dayType, results, directionText, sourceStationName, trips }: ScheduleResult) {
 
     
     const [showLineTab, setShowLineTab] = useState(false);

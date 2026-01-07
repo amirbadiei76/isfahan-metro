@@ -87,7 +87,8 @@ function App() {
             findNearest(latitude, longitude);
             console.log("Position updated:", latitude, longitude);
           },
-          async (error) => {
+          (error) => {
+            console.log(error.message)
             // console.warn("GPS tracking error, trying IP-based location...", error.message);
             // // Fallback به IP (فقط یک‌بار در صورت خطای GPS)
             // try {
