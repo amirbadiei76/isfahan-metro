@@ -44,10 +44,10 @@ function App() {
         if (dist < minDistance) {
           minDistance = dist;
           closestId = station.id;
-          console.log(lat, lon, " | ", station.lat, station.lon, station.name, station.id, minDistance)
+          // console.log(lat, lon, " | ", station.lat, station.lon, station.name, station.id, minDistance)
         }
       });
-      console.log(closestId, minDistance)
+      // console.log(closestId, minDistance)
       // اگر کاربر در محدوده اصفهان باشد (مثلاً فاصله کمتر از 30 کیلومتر تا نزدیکترین ایستگاه)
       if (minDistance < 2) {
         setNearestStationId(closestId);
@@ -55,7 +55,6 @@ function App() {
     };
     
     function setTodayIsHoliday (data: {date: string, events: { is_holiday: boolean, description: string }[]}[]) {
-
       const formatedDate = getFormatedDate();
       for(const currentDate of data) {
         if (currentDate.date === formatedDate) {
@@ -85,7 +84,7 @@ function App() {
           (position) => {
             const { latitude, longitude } = position.coords;
             findNearest(latitude, longitude);
-            console.log("Position updated:", latitude, longitude);
+            // console.log("Position updated:", latitude, longitude);
           },
           (error) => {
             console.log(error.message)
@@ -194,12 +193,21 @@ function App() {
     
 
     const handleStationClick = (stationName: string) => {
-      if (!sourceStation || (sourceStation && destinationStation)) {
+      // if (!sourceStation || (sourceStation && destinationStation)) {
+      //   setSourceStation(stationName);
+      //   setDestinationStation('');
+      // } else {
+      //   setDestinationStation(sourceStation !== stationName ? stationName : '');
+      // }
+      if (!sourceStation) {
+        setSourceStation(stationName)
+      }
+      else if (sourceStation && !destinationStation) {
+        setDestinationStation(sourceStation !== stationName ? stationName : '')
+      }
+      else if (!sourceStation || (sourceStation && destinationStation)) {
         setSourceStation(stationName);
         setDestinationStation('');
-      } else {
-        
-        setDestinationStation(sourceStation !== stationName ? stationName : '');
       }
     };
 
@@ -215,7 +223,7 @@ function App() {
           setTime(time)
           setDate(date)
       }, 1000);
-    }, [])
+    }, []);
 
     const upcomingTrains = useMemo((): ScheduleResult | null => {
         const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
@@ -330,12 +338,26 @@ function App() {
           nextDepartureTime: nextDepartureTime
 
         };
-    }, [sourceStation, destinationStation, isOtherHoliday]);
+    }, [sourceStation, destinationStation, isOtherHoliday, isHoliday]);
 
     const handleSwap = () => {
         setSourceStation(destinationStation);
         setDestinationStation(sourceStation);
     };
+
+    function changeHolidayValue (checked: boolean) {
+      setIsOtherHoliday(checked);
+      if (checked) {
+        if (sourceStation === 'بهارستان' || sourceStation === 'گلستان'
+          || sourceStation === 'دانشگاه' || sourceStation === 'کارگر') {
+            setSourceStation('')
+        }
+        if (destinationStation === 'بهارستان' || destinationStation === 'گلستان'
+            || destinationStation === 'دانشگاه' || destinationStation === 'کارگر') {
+            setDestinationStation('')
+        }
+      }
+    }
 
     return (
       <>
@@ -407,7 +429,7 @@ function App() {
 
             <div className='flex gap-2 justify-end items-center w-full'>
               <label className='rtl font-vazir' htmlFor="check_holiday">تعطیلی؟</label>
-              <input id='check_holiday' checked={isOtherHoliday} onChange={(event) => setIsOtherHoliday(event.target.checked)} type="checkbox" />
+              <input id='check_holiday' checked={isOtherHoliday} onChange={(event) => changeHolidayValue(event.target.checked)} type="checkbox" />
             </div>
             
             <ScheduleDisplay {...upcomingTrains!} />
