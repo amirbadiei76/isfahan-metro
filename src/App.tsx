@@ -265,7 +265,6 @@ function App() {
           }
         }
 
-        // 3. اگر قطاری پیدا نشد (آخرین قطار رفته است)
         if (nextTrainIndex === -1) {
           return {
             dayType: isHoliday ? 'ایام تعطیل' : 'روزهای کاری',
