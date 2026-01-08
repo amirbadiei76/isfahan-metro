@@ -68,6 +68,8 @@ function App() {
           if (todayEventIsHoliday) break;
         }
       }
+      // check for friday if is not holiday
+      if (!isHoliday) setIsHoliday(todayIsHoliday())
     }
 
     useEffect(() => {
