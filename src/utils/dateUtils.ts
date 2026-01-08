@@ -1,6 +1,5 @@
 export const getTodayTime = () => {
-    // const currentDate = new Date().toLocaleString('fa-IR-u-nu-latn', {timeZone: 'Asia/Tehran'});
-    const currentDate = new Date(2026, 1, 20, 21, 20, 0)
+    const currentDate = new Date().toLocaleString('fa-IR-u-nu-latn', {timeZone: 'Asia/Tehran'});
     return new Date(currentDate);
 }
 

@@ -30,10 +30,9 @@ function App() {
     const [isHoliday, setIsHoliday] = useState<boolean>(todayIsHoliday());
     const [time, setTime] = useState<string>(getPersianStringTime())
     const [date, setDate] = useState<string>(getPersianStringDate());
-    const [isOtherHoliday, setIsOtherHoliday] = useState(false);
+    // const [isOtherHoliday, setIsOtherHoliday] = useState(false);
     const [nearestStationId, setNearestStationId] = useState<number | null>(null);
     const [zoomScale, setZoomScale] = useState(1.3);
-    
     
     const findNearest = (lat: number, lon: number) => {
       let minDistance = Infinity;
@@ -58,8 +57,15 @@ function App() {
       const formatedDate = getFormatedDate();
       for(const currentDate of data) {
         if (currentDate.date === formatedDate) {
-          setIsHoliday(true)
-          break
+          let todayEventIsHoliday: boolean = false;
+          for(const currentEvent of currentDate.events) {
+            if (currentEvent.is_holiday) {
+              todayEventIsHoliday = true;
+              setIsHoliday(true)
+              break
+            }
+          }
+          if (todayEventIsHoliday) break;
         }
       }
     }
@@ -212,7 +218,7 @@ function App() {
     };
 
     useEffect(() => {
-      setIsOtherHoliday(false)
+      // setIsOtherHoliday(false)
 
       setInterval(() => {
           const time = getPersianStringTime()
@@ -226,9 +232,9 @@ function App() {
     }, []);
 
     const upcomingTrains = useMemo((): ScheduleResult | null => {
-        const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
+        const dayType = (isHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
         if (!sourceStation || !destinationStation || sourceStation === destinationStation) {
-          return { isHoliday: (isHoliday! || isOtherHoliday), dayType: dayType, results: [], directionText: '', sourceStationName: '', destinationStationName: '', nextDepartureTime: '', trips: [] };
+          return { isHoliday: (isHoliday!), dayType: dayType, results: [], directionText: '', sourceStationName: '', destinationStationName: '', nextDepartureTime: '', trips: [] };
         }
 
         const source = stations.find(s => s.name === sourceStation);
@@ -237,16 +243,15 @@ function App() {
         if (!source || !destination) return null;
 
         const directionKey = source.id < destination.id ? 'qods_to_sofeh' : 'sofeh_to_qods';
-        const dayTypeKey = (isHoliday || isOtherHoliday) ? 'holidays' : 'weekdays';
+        const dayTypeKey = (isHoliday) ? 'holidays' : 'weekdays';
       
         const allDepartures = schedule[dayTypeKey][directionKey][sourceStation];
         const allArrivals = schedule[dayTypeKey][directionKey][destinationStation];
 
-        // const dayType = (isHoliday || isOtherHoliday) ? 'جمعه و روزهای تعطیل' : 'روزهای کاری';
         const directionText = `مسیر: ${source.name} به سمت ${destination.name}`;
 
         if (!allArrivals || !allDepartures) {
-          return { isHoliday: (isHoliday! || isOtherHoliday), dayType: dayType, results: [], directionText: directionText, sourceStationName: '', destinationStationName: '', nextDepartureTime: '', trips: [] };
+          return { isHoliday: (isHoliday!), dayType: dayType, results: [], directionText: directionText, sourceStationName: '', destinationStationName: '', nextDepartureTime: '', trips: [] };
         }
 
         
@@ -327,7 +332,7 @@ function App() {
 
 
         return {
-          isHoliday: (isHoliday! || isOtherHoliday),
+          isHoliday: isHoliday,
           dayType: isHoliday ? 'ایام تعطیل' : 'روزهای کاری',
           results: results.slice(0, 5),
           directionText: directionText,
@@ -337,7 +342,7 @@ function App() {
           nextDepartureTime: nextDepartureTime
 
         };
-    }, [sourceStation, destinationStation, isOtherHoliday, isHoliday]);
+    }, [sourceStation, destinationStation, isHoliday]);
 
     const handleSwap = () => {
         setSourceStation(destinationStation);
@@ -345,7 +350,7 @@ function App() {
     };
 
     function changeHolidayValue (checked: boolean) {
-      setIsOtherHoliday(checked);
+      setIsHoliday(checked);
       if (checked) {
         if (sourceStation === 'بهارستان' || sourceStation === 'گلستان'
           || sourceStation === 'دانشگاه' || sourceStation === 'کارگر') {
@@ -391,7 +396,7 @@ function App() {
                       onStationClick={handleStationClick}
                       nearestStationId={nearestStationId}
                       zoomScale={zoomScale}
-                      isHoliday={isHoliday || isOtherHoliday}
+                      isHoliday={isHoliday}
                     />
                   </TransformComponent>
                 </>
@@ -405,7 +410,7 @@ function App() {
                 label="ایستگاه مقصد"
                 value={destinationStation}
                 onChange={(e) => setDestinationStation(e.target.value)}
-                stations={stations.filter(s => s.name !== sourceStation && !((isHoliday || isOtherHoliday) && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
+                stations={stations.filter(s => s.name !== sourceStation && !(isHoliday && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
               />
               <div className="flex justify-center P-2 items-center">
                 <button
@@ -422,13 +427,13 @@ function App() {
                 label="ایستگاه مبدا"
                 value={sourceStation}
                 onChange={(e) => setSourceStation(e.target.value)}
-                stations={stations.filter(s => s.name !== destinationStation && !((isHoliday || isOtherHoliday) && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
+                stations={stations.filter(s => s.name !== destinationStation && !(isHoliday && (s.id == 17 || s.id == 18 || s.id == 2 || s.id == 3)))}
               />
             </div>
 
             <div className='flex gap-2 justify-end items-center w-full'>
               <label className='rtl font-vazir' htmlFor="check_holiday">تعطیلی؟</label>
-              <input id='check_holiday' checked={isOtherHoliday} onChange={(event) => changeHolidayValue(event.target.checked)} type="checkbox" />
+              <input id='check_holiday' checked={isHoliday} onChange={(event) => changeHolidayValue(event.target.checked)} type="checkbox" />
             </div>
             
             <ScheduleDisplay {...upcomingTrains!} />
