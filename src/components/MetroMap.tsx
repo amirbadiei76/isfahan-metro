@@ -43,30 +43,17 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
   const viewBoxWidth = 250;
 
   return (
-    <div className="w-full h-[504px] justify-center items-center overflow-hidden">
+    <div className="w-full h-[504px] border justify-center items-center">
 
 
       <svg
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         width="100%"
         height="100%"
+        className='min-w-100 border border-amber-400'
         preserveAspectRatio="xMidYMid meet"
         >
-          <defs>
-            {/* تعریف فلش (Arrow Head) */}
-            <marker
-              id="arrowhead"
-              markerWidth="10"
-              markerHeight="7"
-              refX="9"
-              refY="3.5"
-              orient="auto"
-            >
-              <polygon points="0 0, 10 3.5, 0 7" fill="#ffcc00" />
-            </marker>
-          </defs>
         <defs>
-          تعریف فیلتر درخشش (Glow) برای نزدیک‌ترین ایستگاه
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="4" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
@@ -97,33 +84,6 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
               />
             );
           })}
-
-          {highlightedSegments.size > 0 && (
-            <>
-              {/* <path
-                d={generatePath(Math.min(startIndex + 1, endIndex), Math.max(startIndex, endIndex))}
-                fill="none"
-                stroke="none"
-                strokeWidth="3"
-                strokeLinecap="round"
-                markerEnd={!isReverse ? "url(#arrowhead)" : ""}
-                markerStart={!isReverse ? "url(#arrowhead)" : ""}
-                style={{ transition: 'all 0.3s ease', rotate: isReverse ? "180" : "0" }}
-              /> */}
-              {/* <path
-                d={generatePath(Math.min(startIndex, endIndex), Math.max(startIndex, endIndex))}
-                fill="none"
-                stroke="#ffcc00"
-                strokeWidth="3"
-                strokeLinecap="round"
-                markerEnd={!isReverse ? "url(#arrowhead)" : ""}
-                markerStart={isReverse ? "url(#arrowhead)" : ""}
-                style={{ transition: 'all 0.3s ease' }}
-              /> */}
-            </>
-              
-            )}
-
             
 
           {stations.slice(0, -1).map((station, index) => {
@@ -148,12 +108,9 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
 
           {stations.map((station) => {
             const isHighlighted = highlightedStations.has(station.id);
-            // const isEndpoint = station.name === sourceStationName || station.name === destinationStationName;
-
             const isSource = station.name === sourceStationName;
             const isDest = station.name === destinationStationName;
             const isNearest = station.id === nearestStationId;
-            // const isInPath = highlightInfo.has(station.id);
 
             return (
               <g onClick={() => (station.id === 2 || station.id === 3 || station.id === 17 || station.id === 18) && isHoliday ? {} : onStationClick(station.name)} className='relative' key={`station-group-${station.id}`} transform={`translate(${station.x}, ${station.y})`}>

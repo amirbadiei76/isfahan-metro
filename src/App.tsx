@@ -75,7 +75,8 @@ function App() {
     useEffect(() => {
       fetch(`https://raw.githubusercontent.com/hasan-ahani/shamsi-holidays/main/holidays/${getCurrentYear()}.json`)
       .then(response => response.json())
-      .then(data => setTodayIsHoliday(data));
+      .then(data => setTodayIsHoliday(data))
+      .catch((error) => console.log(error))
     }, [getCurrentYear])
 
 
@@ -368,15 +369,14 @@ function App() {
     return (
       <>
         <Header date={date} time={time}  />
-        <main className="bg-gray-900 min-h-(--remain-height) flex w-full flex-col md:flex-row p-5 gap-4 text-white font-vazir">
+        <main  className="bg-gray-900 min-h-(--remain-height) flex w-full flex-col md:flex-row p-5 gap-4 text-white font-vazir">
           
-          <div className='flex w-full flex-1 flex-col bg-gray-800 p-4 rounded-lg shadow-lg relative'>
-            <h2 className="text-xl font-semibold text-cyan-400 mb-4">نقشه شماتیک مسیر</h2>
+          <div className='flex flex-1 flex-col bg-gray-800 p-4 rounded-lg shadow-lg relative'>
             <TransformWrapper
               initialScale={1.3}
               onTransformed={(ref) => setZoomScale(ref.state.scale)}
-              initialPositionX={-80}
-              initialPositionY={-75}
+              initialPositionX={0}
+              initialPositionY={0}
               minScale={1}
               maxScale={6}
             >
@@ -390,7 +390,7 @@ function App() {
                   
                   <TransformComponent
                     wrapperStyle={{ width: '100%', height: '100%', cursor: 'grab' }}
-                    contentStyle={{ width: '100%', height: '100%' }}
+                    // contentStyle={{ width: '100%', height: '100%' }}
                   >
                     <MetroMap
                       sourceStationName={sourceStation}
