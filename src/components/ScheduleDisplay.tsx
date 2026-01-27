@@ -44,7 +44,7 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
     }
     
     return (
-        <div className="mt-8 w-full md:max-w-80 bg-blue-400 p-6 rounded-lg shadow-lg animate-fade-in rtl">
+        <div className="mt-8 flex flex-col bg-blue-400 p-6 rounded-lg shadow-lg animate-fade-in rtl">
             
             <div className='flex gap-2'>
                 <button onClick={() => setShowLineTab(true)} className="cursor-pointer bg-blue-800 rounded-lg text-white px-2 py-1">Show Line</button>
@@ -88,21 +88,21 @@ export default function ScheduleDisplay ({ dayType, results, directionText, sour
                     {   showLineTab &&
                     <div className="relative pl-4">
                         {/* خط عمودی تایم‌لاین */}
-                        <div className="absolute right-26.5 top-0 bottom-0 w-0.5 bg-gray-600" style={{ left: '2.3rem' }}></div>
+                        <div className="absolute right-[108px] top-0 bottom-0 w-0.5 bg-gray-600"></div>
                     
                         <ul className="space-y-4">
                         {trips.map((stop, index) => (
                             <li key={index} className="flex items-center space-x-4 space-x-reverse">
                                 {/* زمان */}
                                 <div className="z-10 bg-gray-900 px-2 py-1 rounded-md border border-gray-600">
-                                    <p className="text-lg font-vazir font-bold text-white">{stop.arrivalTime}</p>
+                                    <p className="text-lg font-vazir font-bold text-white min-w-[6ch] text-center">{stop.arrivalTime}</p>
                                 </div>
                                 
                                 {/* دایره روی خط تایم‌لاین */}
                                 <div className={`z-10 w-4 h-4 rounded-full ${index === 0 ? 'bg-cyan-400' : 'bg-gray-400'} border-2 border-gray-900`}></div>
                                 
                                 {/* نام ایستگاه */}
-                                <p className={`text-md ${index === 0 ? 'font-bold text-cyan-400' : 'text-gray-300'}`}>
+                                <p className={`text-md mr-2 ${index === 0 ? 'font-bold text-cyan-400' : 'text-gray-300'}`}>
                                     {stop.stationName}
                                     {index === 0 && ' (مبدا)'}
                                     {index === trips.length - 1 && ' (مقصد)'}
