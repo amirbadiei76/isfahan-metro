@@ -291,7 +291,6 @@ function App() {
                   
                   <TransformComponent
                     wrapperStyle={{ width: '100%', height: '100%', cursor: 'grab' }}
-                    contentStyle={{ width: '100%', height: '100%', alignContent: 'center' }}
                   >
                     <MetroMap
                       sourceStationName={sourceStation}

@@ -43,7 +43,7 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
   const viewBoxWidth = 250;
 
   return (
-    <div className="w-full h-[504px] justify-center items-center">
+    <div className="min-w-120 h-[504px] justify-center items-center">
 
 
       <svg
