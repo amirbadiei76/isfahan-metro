@@ -77,8 +77,6 @@ function App() {
           }
         }
       }
-      // check for friday if is not holiday
-      // if (!isHoliday) setIsHoliday(todayIsHoliday())
     }
 
     useEffect(() => {
@@ -173,7 +171,7 @@ function App() {
           const time = allDepartures[i];
           const [hour, minute] = time.split(':').map(Number);
           if ((hour * 60 + minute) >= now) {
-            nextTrainIndex = i; // ایندکس قطار مورد نظر ما پیدا شد
+            nextTrainIndex = i;
             nextDepartureTime = time;
             break;
           }

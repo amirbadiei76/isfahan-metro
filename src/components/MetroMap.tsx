@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { stations } from '../data/stations';
-import IsfahanStreets from './IsfahanStreets';
+import IsfahanStreets from './streets/IsfahanStreets';
+import IsfahanStreets2 from './streets/IsfahanStreets2';
 
 
 interface MetroMapProps {
@@ -13,7 +14,7 @@ interface MetroMapProps {
 }
 
 
-const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStationName, nearestStationId, onStationClick, zoomScale, isHoliday }) => {
+const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId, onStationClick, zoomScale, isHoliday }: MetroMapProps) => {
 
   const highlightedElements = useMemo(() => {
     const source = stations.find(s => s.name === sourceStationName);
@@ -69,6 +70,7 @@ const MetroMap: React.FC<MetroMapProps> = ({ sourceStationName, destinationStati
 
         
         <IsfahanStreets />
+        <IsfahanStreets2 />
 
         <g transform='translate(0, -100)'>
           {stations.slice(0, -1).map((station, index) => {
