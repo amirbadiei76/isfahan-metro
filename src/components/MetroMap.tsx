@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { stations } from '../data/stations';
 import IsfahanStreets from './streets/IsfahanStreets';
 import IsfahanStreets2 from './streets/IsfahanStreets2';
+import IsfahanStreets3 from './streets/IsfahanStreets3';
 
 
 interface MetroMapProps {
@@ -68,7 +69,7 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
 
         
 
-        
+        <IsfahanStreets3 />
         <IsfahanStreets />
         <IsfahanStreets2 />
 
