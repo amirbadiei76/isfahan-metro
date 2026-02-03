@@ -281,7 +281,7 @@ function App() {
             >
               {({ zoomIn, zoomOut, resetTransform }) => (
                 <>
-                  <div className="flex gap-2 mb-2 absolute top-0 right-0">
+                  <div className="flex gap-2 mb-2 absolute top-0 right-0 z-10">
                     <button onClick={() => zoomIn()} className="px-3 py-1 bg-gray-600 rounded text-lg">+</button>
                     <button onClick={() => zoomOut()} className="px-3 py-1 bg-gray-600 rounded text-lg">-</button>
                     <button onClick={() => resetTransform()} className="px-3 py-1 bg-gray-600 rounded text-sm">بازنشانی</button>
