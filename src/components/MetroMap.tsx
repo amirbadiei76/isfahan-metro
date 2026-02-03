@@ -42,7 +42,7 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
   const bubbleScale = (1 / (zoomScale > 3 ? 3 : zoomScale)) * 2.5;
 
   const viewBoxHeight = 890;
-  const viewBoxWidth = 250;
+  const viewBoxWidth = 380;
 
   return (
     <div className="min-w-120 h-[504px] justify-center items-center">

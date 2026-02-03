@@ -4,7 +4,7 @@ export default function IsfahanStreets() {
   return (
     <g id="IsfahanStreets">
       {/* <g transform='translate(-291, 476)'> */}
-      <g transform="translate(-700, 0)">
+      <g transform="translate(-850, 0)">
 
         <path
           fill="none"
@@ -836,6 +836,7 @@ export default function IsfahanStreets() {
 
       {/* /////// */}
       <g transform='translate(-291, 476) scale(1.55)'>
+        {/*
         <path
             d="
                 M 0 0
@@ -875,6 +876,7 @@ export default function IsfahanStreets() {
             fill="#8CBDE0"
             transform="translate(260.38 11.65)"
             />
+          */}
         </g>
     </g>
   )
