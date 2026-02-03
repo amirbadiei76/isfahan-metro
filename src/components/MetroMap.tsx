@@ -45,7 +45,7 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
   const viewBoxWidth = 380;
 
   return (
-    <div className="min-w-120 h-[504px] justify-center items-center">
+    <div className="min-w-250 h-[504px] justify-center items-center">
 
 
       <svg
