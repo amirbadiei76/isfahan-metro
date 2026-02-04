@@ -42,10 +42,10 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
   const bubbleScale = (1 / (zoomScale > 3 ? 3 : zoomScale)) * 2.5;
 
   const viewBoxHeight = 890;
-  const viewBoxWidth = 380;
+  const viewBoxWidth = 250;
 
   return (
-    <div className="min-w-250 h-[504px] justify-center items-center">
+    <div className="min-w-220 h-[544px] justify-center items-center">
 
 
       <svg
