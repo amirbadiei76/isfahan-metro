@@ -3,6 +3,9 @@ import { stations } from '../data/stations';
 import IsfahanStreets from './streets/IsfahanStreets';
 import IsfahanStreets2 from './streets/IsfahanStreets2';
 import IsfahanStreets3 from './streets/IsfahanStreets3';
+import IsfahanStreets4 from './streets/IsfahanStreets4';
+import IsfahanStreetTexts from './streets/IsfahanStreetTexts';
+import IsfahanStreets5 from './streets/IsfahanStreets5';
 
 
 interface MetroMapProps {
@@ -42,17 +45,15 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
   const bubbleScale = (1 / (zoomScale > 3 ? 3 : zoomScale)) * 2.5;
 
   const viewBoxHeight = 890;
-  const viewBoxWidth = 250;
+  const viewBoxWidth = 850;
 
   return (
-    <div className="min-w-220 h-[544px] justify-center items-center">
-
-
+    <div className="min-w-420 h-[504px] justify-center items-center">
       <svg
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         width="100%"
         height="100%"
-        className='min-w-80'
+        className='min-w-120'
         preserveAspectRatio="xMidYMid meet"
         >
         <defs>
@@ -67,11 +68,12 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
           <path d="M50,750 Q250,700 450,750" opacity="0.5" />
         </g> */}
 
-        
-
+        <IsfahanStreets4 />
+        <IsfahanStreets5 />
         <IsfahanStreets3 />
         <IsfahanStreets />
         <IsfahanStreets2 />
+        <IsfahanStreetTexts />
 
         <g transform='translate(0, -100)'>
           {stations.slice(0, -1).map((station, index) => {
@@ -157,10 +159,8 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
                   {station.name}
                 </text>
 
-                {/* نمایش حباب مبدا یا مقصد */}
                 {(isSource || isDest) && (
                   <g transform={`translate(0, -5) scale(${bubbleScale})`} className='z-10'>
-                    {/* شکل حباب */}
                     <path
                       // d="M -16 -30 H 16 V -10 H 6 L 0 0 L -6 -10 H -16 Z"
 
@@ -181,7 +181,6 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
                       className="drop-shadow-lg"
                     />
 
-                    {/* متن داخل حباب */}
                     <text
                       y="-17"
                       textAnchor="middle"

@@ -270,7 +270,7 @@ function App() {
         <Header date={date} time={time}  />
         <main  className="bg-gray-900 min-h-(--remain-height) flex w-full flex-col md:flex-row p-5 gap-4 text-white font-vazir">
           
-          <div className='flex flex-1 flex-col bg-gray-800 p-4 rounded-lg shadow-lg relative'>
+          <div className='flex flex-1 flex-col bg-white p-4 rounded-lg shadow-lg relative'>
             <TransformWrapper
               initialScale={1.3}
               onTransformed={(ref) => setZoomScale(ref.state.scale)}
