@@ -6,6 +6,8 @@ import IsfahanStreets3 from './streets/IsfahanStreets3';
 import IsfahanStreets4 from './streets/IsfahanStreets4';
 import IsfahanStreetTexts from './streets/IsfahanStreetTexts';
 import IsfahanStreets5 from './streets/IsfahanStreets5';
+import IsfahanStreets6 from './streets/IsfahanStreets6';
+import IsfahanStreets61 from './streets/IsfahanStreets61';
 
 
 interface MetroMapProps {
@@ -45,10 +47,10 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
   const bubbleScale = (1 / (zoomScale > 3 ? 3 : zoomScale)) * 2.5;
 
   const viewBoxHeight = 890;
-  const viewBoxWidth = 850;
+  const viewBoxWidth = 250;
 
   return (
-    <div className="min-w-420 h-[504px] justify-center items-center">
+    <div className="min-w-120 h-[504px] justify-center items-center">
       <svg
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         width="100%"
@@ -69,6 +71,8 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
         </g> */}
 
         <IsfahanStreets4 />
+        <IsfahanStreets6 />
+        <IsfahanStreets61 />
         <IsfahanStreets5 />
         <IsfahanStreets3 />
         <IsfahanStreets />

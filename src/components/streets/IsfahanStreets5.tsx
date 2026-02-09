@@ -7,12 +7,8 @@ export default function IsfahanStreets5() {
       {/* 
       
       */}
-      <g transform="translate(-850, 0)">
-
-        
-
-        
-
+      <g transform="translate(-950, 0)">
+        {/* dark green/yellow border */}
         <path
           fill="none"
           strokeWidth="5"
