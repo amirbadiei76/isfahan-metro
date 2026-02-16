@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { stations } from '../data/stations';
 import IsfahanStreets from './streets/IsfahanStreets';
 import IsfahanStreets2 from './streets/IsfahanStreets2';
@@ -46,7 +46,7 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
   const { highlightedStations, highlightedSegments, endIndex, isReverse, startIndex } = highlightedElements;
   const bubbleScale = (1 / (zoomScale > 3 ? 3 : zoomScale)) * 2.5;
 
-  const viewBoxHeight = 890;
+  const viewBoxHeight = 810;
   const viewBoxWidth = 250;
 
   return (
