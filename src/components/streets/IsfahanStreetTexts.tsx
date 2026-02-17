@@ -9,7 +9,23 @@ export default function IsfahanStreetTexts() {
 
       */}
       <g transform="translate(0, 0)">
-        {/* <text x={0} y={231} fontSize={29} className="font-vazir">سلام</text> */}
+        <text x={-245} y={683} fill="black"
+          stroke="#F9B29C"
+          strokeWidth="2"
+          paintOrder="stroke" transform="rotate(-40)" fontSize={11} className="font-vazir">بزرگراه شهید کشوری</text>
+
+          
+        {/* stroke: #FCD6A4 */}
+        <text x={25} y={483} fill="black"
+          stroke="#FCD6A4"
+          strokeWidth="2"
+          paintOrder="stroke" fontSize={11} className="font-vazir">دانشگاه</text>
+          
+        <text x={-75} y={479} fill="black"
+          stroke="#FCD6A4"
+          strokeWidth="2"
+          paintOrder="stroke" fontSize={11} className="font-vazir">ارتش</text>
+
       </g>
     </g>
   )

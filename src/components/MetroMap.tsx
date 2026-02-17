@@ -43,7 +43,7 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
     return { highlightedStations, highlightedSegments, startIndex: source.id, endIndex: dest.id, isReverse: source.id > dest.id };
   }, [sourceStationName, destinationStationName]);
 
-  const { highlightedStations, highlightedSegments, endIndex, isReverse, startIndex } = highlightedElements;
+  // const { highlightedStations, highlightedSegments, endIndex, isReverse, startIndex } = highlightedElements;
   const bubbleScale = (1 / (zoomScale > 3 ? 3 : zoomScale)) * 2.5;
 
   const viewBoxHeight = 810;
@@ -79,7 +79,7 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
         <IsfahanStreets2 />
         <IsfahanStreetTexts />
 
-        <g transform='translate(0, -100)'>
+        {/* <g transform='translate(0, -100)'>
           {stations.slice(0, -1).map((station, index) => {
             const nextStation = stations[index + 1];
             return (
@@ -191,8 +191,7 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
                       fill="white"
                       fontSize="11"
                       fontWeight="bold"
-                      className="select-none"
-                      style={{ pointerEvents: 'none' }}
+                      className="select-none pointer-events-none"
                     >
                       {isSource ? "مبدا" : "مقصد"}
                     </text>
@@ -212,7 +211,7 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
               </g>
             );
           })}
-        </g>
+        </g> */}
       </svg>
     </div>
   );
