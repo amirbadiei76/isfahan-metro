@@ -26,6 +26,18 @@ export default function IsfahanStreetTexts() {
           strokeWidth="2"
           paintOrder="stroke" fontSize={11} className="font-vazir">ارتش</text>
 
+        <text x={-175} y={471} fill="black"
+          stroke="#FCD6A4"
+          strokeWidth="2"
+          paintOrder="stroke" fontSize={11} className="font-vazir">کشاورز</text>
+
+        {/* stroke: #F7FABF */}
+        <text x={0} y={0} fill="black"
+          stroke="#F7FABF"
+          strokeWidth="2"
+          paintOrder="stroke" fontSize={12} transform="rotate(-90)" className="font-vazir">ارتش</text>
+
+
       </g>
     </g>
   )
