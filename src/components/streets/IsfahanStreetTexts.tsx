@@ -36,10 +36,16 @@ export default function IsfahanStreetTexts() {
         strokeWidth="2"
         paintOrder="stroke" fontSize={11} transform="rotate(-83)" className="font-vazir">شهدای صفه</text>
         
-      <text x={-575} y={60} fill="#000"
-        stroke="#F7FABF"
-        strokeWidth="2"
-        paintOrder="stroke" fontSize={11} transform="rotate(-17 -575 60)" className="font-vazir">گذرگاه شهدای صفه</text>
+      <text x={-575}
+            y={60}
+            fill="#000"
+            stroke="#F7FABF"
+            strokeWidth="2"
+            paintOrder="stroke"
+            fontSize={11}
+            transform="rotate(57 -835 890)"
+            className="font-vazir"
+      >گذرگاه شهدای صفه</text>
 
 
     </g>
