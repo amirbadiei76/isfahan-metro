@@ -7,6 +7,16 @@ export default function IsfahanStreetTexts() {
         stroke="#F9B29C"
         strokeWidth="2"
         paintOrder="stroke" transform="rotate(-40)" fontSize={11} className="font-vazir">بزرگراه شهید کشوری</text>
+        
+      <text x={-370} y={590} fill="#000"
+        stroke="#F9B29C"
+        strokeWidth="2"
+        paintOrder="stroke" transform="rotate(10 -370 590)" fontSize={11} className="font-vazir">بزرگراه شهید عقارب پرست</text>
+        
+      <text x={-150} y={625} fill="#000"
+        stroke="#F9B29C"
+        strokeWidth="2"
+        paintOrder="stroke" transform="rotate(2 -150 625)" fontSize={11} className="font-vazir">بزرگراه شهید عقارب پرست</text>
 
         
       {/* stroke: #FCD6A4 */}
