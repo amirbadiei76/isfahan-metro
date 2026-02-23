@@ -3,11 +3,7 @@ import { stations } from '../data/stations';
 import IsfahanStreets from './streets/IsfahanStreets';
 import IsfahanStreets2 from './streets/IsfahanStreets2';
 import IsfahanStreets3 from './streets/IsfahanStreets3';
-import IsfahanStreets4 from './streets/IsfahanStreets4';
 import IsfahanStreetTexts from './streets/IsfahanStreetTexts';
-import IsfahanStreets5 from './streets/IsfahanStreets5';
-import IsfahanStreets6 from './streets/IsfahanStreets6';
-import IsfahanStreets61 from './streets/IsfahanStreets61';
 
 
 interface MetroMapProps {
@@ -47,15 +43,25 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
   const bubbleScale = (1 / (zoomScale > 3 ? 3 : zoomScale)) * 2.5;
 
   const viewBoxHeight = 810;
-  const viewBoxWidth = 250;
+  const viewBoxWidth = 350;
+  // left: 32.61433019998068 / 51.565231710442596
+  // right: 32.629608669429985 / 51.73283763746673
+  // top: 32.68132508835538 / 51.64312083627586
+  // bottom: 32.583751003922956 / 51.669970215437274
+
+  const MAX_LAT = 32.68132508835538; // top
+  const MIN_LAT = 32.583751003922956; // bottom
+  const MIN_LON = 51.565231710442596; // left
+  const MAX_LON = 51.73283763746673; // right
+
 
   return (
-    <div className="min-w-120 h-[504px] justify-center items-center">
+    <div className="min-w-150 h-[504px] justify-center items-center">
       <svg
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         width="100%"
         height="100%"
-        className='min-w-120'
+        className='min-w-180'
         preserveAspectRatio="xMidYMid meet"
         >
         <defs>
@@ -70,16 +76,13 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
           <path d="M50,750 Q250,700 450,750" opacity="0.5" />
         </g> */}
 
-        <IsfahanStreets4 />
-        <IsfahanStreets6 />
-        <IsfahanStreets61 />
-        <IsfahanStreets5 />
-        <IsfahanStreets3 />
         <IsfahanStreets />
         <IsfahanStreets2 />
+        <IsfahanStreets3 />
         <IsfahanStreetTexts />
 
-        <g transform='translate(0, -100)'>
+        {/*
+        <g transform='translate(200, -100)'>
           {stations.slice(0, -1).map((station, index) => {
             const nextStation = stations[index + 1];
             return (
@@ -212,6 +215,7 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
             );
           })}
         </g>
+        */}
       </svg>
     </div>
   );

@@ -268,7 +268,7 @@ function App() {
     return (
       <>
         <Header date={date} time={time}  />
-        <main  className="bg-gray-900 min-h-(--remain-height) flex w-full flex-col md:flex-row p-5 gap-4 text-white font-vazir">
+        <main  className="bg-gray-900 min-h-(--remain-height) flex w-full flex-col lg:flex-row p-5 gap-4 text-white font-vazir">
           
           <div className='flex flex-1 flex-col bg-white p-4 rounded-lg shadow-lg relative'>
             <TransformWrapper
