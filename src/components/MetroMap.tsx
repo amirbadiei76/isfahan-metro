@@ -1,9 +1,10 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { stations } from '../data/stations';
 import IsfahanStreets from './streets/IsfahanStreets';
 import IsfahanStreets2 from './streets/IsfahanStreets2';
 import IsfahanStreets3 from './streets/IsfahanStreets3';
 import IsfahanStreetTexts from './streets/IsfahanStreetTexts';
+import IsfahanStreetTexts2 from './streets/IsfahanStreetTexts2';
 
 
 interface MetroMapProps {
@@ -39,11 +40,11 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
     return { highlightedStations, highlightedSegments, startIndex: source.id, endIndex: dest.id, isReverse: source.id > dest.id };
   }, [sourceStationName, destinationStationName]);
 
-  const { highlightedStations, highlightedSegments, endIndex, isReverse, startIndex } = highlightedElements;
+  // const { highlightedStations, highlightedSegments, endIndex, isReverse, startIndex } = highlightedElements;
   const bubbleScale = (1 / (zoomScale > 3 ? 3 : zoomScale)) * 2.5;
 
-  const viewBoxHeight = 810;
-  const viewBoxWidth = 350;
+  const viewBoxHeight = 1230;
+  const viewBoxWidth = 2405;
   // left: 32.61433019998068 / 51.565231710442596
   // right: 32.629608669429985 / 51.73283763746673
   // top: 32.68132508835538 / 51.64312083627586
@@ -55,13 +56,21 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
   const MAX_LON = 51.73283763746673; // right
 
 
+  const TextComponents = useCallback(() => {
+      return (
+        <>
+          <IsfahanStreetTexts />
+          <IsfahanStreetTexts2 />
+        </>
+      )
+  }, [])
+
+
   return (
-    <div className="min-w-150 h-[504px] justify-center items-center">
+    <div className="min-w-150 h-[504px] flex justify-center items-center">
       <svg
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
-        width="100%"
-        height="100%"
-        className='min-w-180'
+        className='min-w-150'
         preserveAspectRatio="xMidYMid meet"
         >
         <defs>
@@ -79,7 +88,7 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
         <IsfahanStreets />
         <IsfahanStreets2 />
         <IsfahanStreets3 />
-        <IsfahanStreetTexts />
+        {TextComponents()}
 
         {/*
         <g transform='translate(200, -100)'>

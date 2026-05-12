@@ -274,10 +274,11 @@ function App() {
             <TransformWrapper
               initialScale={1.3}
               onTransformed={(ref) => setZoomScale(ref.state.scale)}
-              initialPositionX={0}
-              initialPositionY={0}
-              minScale={1}
+              initialPositionX={-267}
+              initialPositionY={-40}
+              minScale={1.3}
               maxScale={6}
+              limitToBounds
             >
               {({ zoomIn, zoomOut, resetTransform }) => (
                 <>

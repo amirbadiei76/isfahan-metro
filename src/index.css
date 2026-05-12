@@ -25,6 +25,10 @@
 }
 
 
+.scroll-hide::-webkit-scrollbar {
+    display: none;
+}
+
 .metro-line-bg {
   stroke: #555;
   stroke-width: 4px;
