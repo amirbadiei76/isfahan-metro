@@ -8,25 +8,23 @@
 :root {
   --theme-white: #f3f3f3;
   --theme-black: #121212;
-  
+
   --light-theme: #dcdcdc;
   --dark-theme: #303030;
 
-  --remain-height: calc(100vh - 9rem)
-
+  --remain-height: calc(100vh - 9rem);
 }
 
 .rtl {
-    direction: rtl;
+  direction: rtl;
 }
 
 .ltr {
   direction: ltr;
 }
 
-
 .scroll-hide::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .metro-line-bg {
@@ -41,11 +39,14 @@
   stroke-linecap: round;
 }
 
+.leaflet-control-attribution {
+  display: none;
+}
+
 /* @keyframes dash {
   from { stroke-dashoffset: 1000; }
   to { stroke-dashoffset: 0; }
 } */
-
 
 .station-circle {
   fill: #999;
@@ -73,36 +74,33 @@
   fill: #aaa;
   font-size: 10px;
   font-weight: normal;
-  font-family: 'Vazirmatn', sans-serif;
+  font-family: "Vazirmatn", sans-serif;
   direction: rtl;
   text-anchor: start;
-  font-family: 'Vazir';
+  font-family: "Vazir";
 }
 
 .station-text-highlight {
   fill: #fff;
   font-size: 11px;
   font-weight: bold;
-  font-family: 'Vazirmatn', sans-serif;
+  font-family: "Vazirmatn", sans-serif;
   direction: rtl;
   text-anchor: start;
-  font-family: 'Vazir';
+  font-family: "Vazir";
 }
 
 @theme inline {
-  --font-vazir: 'Vazir';
+  --font-vazir: "Vazir";
 
   --color-theme-white: var(--theme-white);
   --color-theme-black: var(--theme-black);
 
-  
   --color-light-theme: var(--light-theme);
   --color-dark-theme: var(--dark-theme);
-
 }
 
-
 @font-face {
-  font-family: 'Vazir';
-  src: url('./assets/fonts/vazir2.ttf');
+  font-family: "Vazir";
+  src: url("./assets/fonts/vazir2.ttf");
 }

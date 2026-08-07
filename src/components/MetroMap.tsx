@@ -1,28 +1,42 @@
-import { useCallback, useMemo } from 'react'
-import { stations } from '../data/stations';
-import IsfahanStreets from './streets/IsfahanStreets';
-import IsfahanStreets2 from './streets/IsfahanStreets2';
-import IsfahanStreets3 from './streets/IsfahanStreets3';
-import IsfahanStreetTexts from './streets/IsfahanStreetTexts';
-import IsfahanStreetTexts2 from './streets/IsfahanStreetTexts2';
-
+import { useCallback, useMemo } from "react";
+// import { stations } from "../data/stations.types";
+import IsfahanStreets from "./streets/IsfahanStreets";
+import IsfahanStreets2 from "./streets/IsfahanStreets2";
+import IsfahanStreets3 from "./streets/IsfahanStreets3";
+import IsfahanStreetTexts from "./streets/IsfahanStreetTexts";
+import IsfahanStreetTexts2 from "./streets/IsfahanStreetTexts2";
+import type { Station } from "../data/stations.types";
 
 interface MetroMapProps {
+  stations: Station[];
   sourceStationName: string;
   destinationStationName: string;
   nearestStationId: number | null;
   onStationClick: (name: string) => void;
   zoomScale: number;
-  isHoliday: boolean
+  isHoliday: boolean;
 }
 
-
-const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId, onStationClick, zoomScale, isHoliday }: MetroMapProps) => {
-
+const MetroMap = ({
+  sourceStationName,
+  destinationStationName,
+  nearestStationId,
+  onStationClick,
+  zoomScale,
+  isHoliday,
+  stations,
+}: MetroMapProps) => {
   const highlightedElements = useMemo(() => {
-    const source = stations.find(s => s.name === sourceStationName);
-    const dest = stations.find(s => s.name === destinationStationName);
-    if (!source || !dest) return { highlightedStations: new Set<number>(), highlightedSegments: new Set<string>(), startIndex: 0, endIndex: 0, isReverse: false };
+    const source = stations.find((s) => s.name === sourceStationName);
+    const dest = stations.find((s) => s.name === destinationStationName);
+    if (!source || !dest)
+      return {
+        highlightedStations: new Set<number>(),
+        highlightedSegments: new Set<string>(),
+        startIndex: 0,
+        endIndex: 0,
+        isReverse: false,
+      };
 
     const highlightedStations = new Set<number>();
     const highlightedSegments = new Set<string>();
@@ -32,12 +46,18 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
 
     for (let i = startIndex; i <= endIndex; i++) {
       highlightedStations.add(i);
-      
+
       if (i < endIndex) {
         highlightedSegments.add(`segment-${i}`);
       }
     }
-    return { highlightedStations, highlightedSegments, startIndex: source.id, endIndex: dest.id, isReverse: source.id > dest.id };
+    return {
+      highlightedStations,
+      highlightedSegments,
+      startIndex: source.id,
+      endIndex: dest.id,
+      isReverse: source.id > dest.id,
+    };
   }, [sourceStationName, destinationStationName]);
 
   // const { highlightedStations, highlightedSegments, endIndex, isReverse, startIndex } = highlightedElements;
@@ -55,24 +75,22 @@ const MetroMap = ({ sourceStationName, destinationStationName, nearestStationId,
   const MIN_LON = 51.565231710442596; // left
   const MAX_LON = 51.73283763746673; // right
 
-
   const TextComponents = useCallback(() => {
-      return (
-        <>
-          <IsfahanStreetTexts />
-          <IsfahanStreetTexts2 />
-        </>
-      )
-  }, [])
-
+    return (
+      <>
+        <IsfahanStreetTexts />
+        <IsfahanStreetTexts2 />
+      </>
+    );
+  }, []);
 
   return (
     <div className="min-w-150 h-[504px] flex justify-center items-center">
       <svg
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
-        className='min-w-150'
+        className="min-w-150"
         preserveAspectRatio="xMidYMid meet"
-        >
+      >
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="4" result="blur" />
