@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import type {
-  ResultTime,
+  // ResultTime,
   ScheduleResult,
   TripInfo,
 } from "./components/ScheduleDisplay";
@@ -32,6 +32,9 @@ export interface IDateData {
   events: IDateEvent[];
 }
 function App() {
+  // const excluded = ["بهارستان", "گلستان", "دانشگاه", "کارگر"];
+  const excluded = [2, 3, 17, 18];
+
   const [sourceStation, setSourceStation] = useState<string>("");
   const [destinationStation, setDestinationStation] = useState<string>("");
   const [today, setToday] = useState<Date>(getTodayTime());
@@ -40,11 +43,10 @@ function App() {
   const [date, setDate] = useState<string>(getPersianStringDate());
   const [stations, setStations] = useState<Station[] | undefined>(undefined);
   const [schedules, setSchedules] = useState<Schedule | undefined>(undefined); // واکشی اطلاعات اولیه
-  const GODS_TO_SOFEH = "qods_to_sofeh";
-  const SOFEH_TO_GODS = "sofeh_to_qods";
 
   useEffect(() => {
-    fetch("https://isfahan-metro-api.onrender.com/api/metro/")
+    // fetch("https://isfahan-metro-api.onrender.com/api/metro/")
+    fetch("http://localhost:5000/api/metro/")
       .then((res) => res.json())
       .then((resp) => {
         setStations(resp.stations);
@@ -92,9 +94,23 @@ function App() {
   const changeHolidayValue = (checked: boolean) => {
     setIsHoliday(checked);
     if (checked) {
-      const excluded = ["بهارستان", "گلستان", "دانشگاه", "کارگر"];
-      if (excluded.includes(sourceStation)) setSourceStation("");
-      if (excluded.includes(destinationStation)) setDestinationStation("");
+      if (
+        excluded.find((id) =>
+          stations?.find(
+            (station) => station.id === id && station.name === sourceStation,
+          ),
+        )
+      )
+        setSourceStation("");
+      if (
+        excluded.find((id) =>
+          stations?.find(
+            (station) =>
+              station.id === id && station.name === destinationStation,
+          ),
+        )
+      )
+        setDestinationStation("");
     }
   };
   const upcomingTrains = useMemo((): ScheduleResult | null => {
@@ -166,10 +182,10 @@ function App() {
 
     if (!source || !destination) return null;
 
-    const directionKey =
-      source.id < destination.id ? "qods_to_sofeh" : "sofeh_to_qods";
+    // const directionKey =
+    //   source.id < destination.id ? "qods_to_sofeh" : "sofeh_to_qods";
 
-    const dayTypeKey = isHoliday ? "holidays" : "weekdays";
+    // const dayTypeKey = isHoliday ? "holidays" : "weekdays";
 
     const dayTypeData = isHoliday ? schedules?.holidays : schedules?.weekdays;
 
@@ -179,10 +195,10 @@ function App() {
         : dayTypeData?.sofeh_to_qods;
 
     const departureIndex = directionData?.stations.findIndex(
-      (station) => station.stationId == source?.id,
+      (station) => +station.stationId === +source.id,
     );
     const arrivalIndex = directionData?.stations.findIndex(
-      (station) => station.stationId == destination?.id,
+      (station) => +station.stationId === +destination.id,
     );
 
     const allDepartures = directionData?.stations[departureIndex!].times;
@@ -233,7 +249,9 @@ function App() {
     const endIndex = Math.max(source.id, destination.id);
     let tripStations =
       stations?.filter((s) => s.id >= startIndex && s.id <= endIndex) || [];
+
     if (source.id > destination.id) tripStations.reverse();
+
     for (const station of tripStations) {
       const dayTypeData = isHoliday ? schedules?.holidays : schedules?.weekdays;
 
@@ -304,6 +322,8 @@ function App() {
       <main className="bg-gray-900 min-h-[calc(100vh-100px)] flex w-full flex-col lg:flex-row p-5 gap-6 text-white font-vazir">
         <div className="w-full lg:w-1/2">
           <GeographicMap
+            isHoliday={isHoliday}
+            holidayExcludes={excluded}
             destinationStationName={destinationStation}
             sourceStationName={sourceStation}
             stations={stations}

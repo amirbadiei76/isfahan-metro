@@ -10,11 +10,14 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { getDistance } from "../../utils/distanceUtils";
 import type { Station } from "../../data/stations.types";
+
 interface GeographicMapProps {
   sourceStationName: string;
   destinationStationName: string;
   stations: Station[];
   onStationClick: (name: string) => void;
+  holidayExcludes: number[];
+  isHoliday: boolean;
 }
 // مدیریت کلیک روی نقشه
 const MapEventsHandler = ({
@@ -35,6 +38,7 @@ const MapEventsHandler = ({
       let minDistance = Infinity;
       let closestStation: Station | null = null;
 
+      /*
       stations.forEach((station: Station) => {
         const dist = getDistance(lat, lng, station.lat, station.lon);
         if (dist < minDistance) {
@@ -48,6 +52,24 @@ const MapEventsHandler = ({
           );
         }
       });
+      */
+      stations.forEach((station: Station) => {
+        const dist = getDistance(lat, lng, station.lat, station.lon);
+
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestStation = station;
+
+          if (closestStation) {
+            onNearestFound(
+              closestStation.name,
+              minDistance,
+              [lat, lng],
+              [closestStation.lat, closestStation.lon],
+            );
+          }
+        }
+      });
     },
   });
   return null;
@@ -57,6 +79,8 @@ const GeographicMap = ({
   destinationStationName,
   stations,
   onStationClick,
+  holidayExcludes,
+  isHoliday,
 }: GeographicMapProps) => {
   const isfahanCenter: [number, number] = [32.6539, 51.666]; // مرکز اصفهان // اضافه شدن نقاط خط به استیت دیالوگ باکس
   const [nearestId, setNearestId] = useState(-1);
@@ -66,11 +90,17 @@ const GeographicMap = ({
     clickedPoint: [number, number];
     stationPoint: [number, number];
   } | null>(null);
+
   const source = stations.find((s) => s.name === sourceStationName);
   const dest = stations.find((s) => s.name === destinationStationName); // محاسبه استایل مارکرها بر اساس وضعیت ایستگاه
+
   const getStationIcon = (station: Station) => {
     const isSource = station.name === sourceStationName;
     const isDest = station.name === destinationStationName;
+
+    const textOffsetX = station.textX !== undefined ? station.textX : 0;
+    const textOffsetY = station.textY !== undefined ? station.textY : 25;
+
     let isIntermediate = false;
     if (source && dest && !isSource && !isDest) {
       const minId = Math.min(source.id, dest.id);
@@ -85,56 +115,147 @@ const GeographicMap = ({
     if (isSource || isDest) {
       circleClass =
         "w-5 h-5 bg-red-600 border-2 border-white shadow-[0_0_10px_red]";
-      textClass = "text-base text-red-600 font-bold bg-white/90 drop-shadow-md";
+      textClass = "text-red-600 font-bold bg-white/90 drop-shadow-md";
       zIndex = 1000;
     } else if (isIntermediate) {
       circleClass =
         "w-4 h-4 bg-orange-500 border-[1.5px] border-white shadow-md";
-      textClass = "text-sm text-orange-600 font-bold bg-white/80";
+      textClass = "text-orange-600 font-bold bg-white/80";
       zIndex = 500;
     }
-    const html = `<div class="absolute flex flex-col items-center cursor-pointer transition-transform font-vazir" style="transform: translate(-50%, -50%);"> <div class="${circleClass} rounded-full transition-all duration-300  ${nearestId === station.id ? "animate duration-400 animate-pulse shadow-[0_0_14px_#0909f6]" : ""}"></div> <span class="${textClass} mt-1 text-center px-1.5 py-0.5 rounded-md whitespace-nowrap">${station.name}</span> </div> `;
+    const html = `<div class="absolute flex flex-col items-center cursor-pointer transition-transform font-vazir" style="transform: translate(-50%, -50%);">
+      <div class="${circleClass} rounded-full transition-all duration-300  ${nearestId === station.id ? "animate duration-400 animate-pulse shadow-[0_0_14px_#0909f6]" : ""}">
+      </div>
+      <span
+        class="${textClass} absolute mt-1 text-center px-1.5 py-0.5 rounded-md max-w-13 min-w-11"
+        style="
+          left: ${textOffsetX}px;
+          top: ${textOffsetY}px;
+        ">
+        ${station.name}
+      </span>
+    </div> `;
     return {
       icon: L.divIcon({ html, className: "", iconSize: [0, 0] }),
       zIndex,
     };
   }; // آیکن موقعیت مکانی با انیمیشن پالس
-  const userLocationIcon = useMemo(() => {
+
+  const clickedLocationIcon = useMemo(() => {
     return L.divIcon({
-      html: ` <div class="absolute" style="transform: translate(-50%, -50%);"> <div class="relative flex h-5 w-5"> <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span> <span class="relative inline-flex rounded-full h-5 w-5 bg-green-600 border-2 border-white shadow-md"></span> </div> </div> `,
+      html: `
+      <div style="
+        width: 36px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+      ">
+        <svg
+          width="36"
+          height="42"
+          viewBox="0 0 36 42"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18 1C8.6 1 1 8.6 1 18C1 29 18 41 18 41C18 41 35 29 35 18C35 8.6 27.4 1 18 1Z"
+            fill="#EA4335"
+            stroke="white"
+            stroke-width="1.5"
+          />
+          <circle
+            cx="18"
+            cy="18"
+            r="6"
+            fill="white"
+          />
+        </svg>
+      </div>
+    `,
       className: "",
-      iconSize: [0, 0],
+      iconSize: [36, 42],
+      iconAnchor: [18, 42],
     });
-  }, []); // محاسبه مسیر و فلش‌های جهت‌دار
+  }, []);
+  // const userLocationIcon = useMemo(() => {
+  //   return L.divIcon({
+  //     html: ` <div class="absolute" style="transform: translate(-50%, -50%);"> <div class="relative flex h-5 w-5"> <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span> <span class="relative inline-flex rounded-full h-5 w-5 bg-green-600 border-2 border-white shadow-md"></span> </div> </div> `,
+  //     className: "",
+  //     iconSize: [0, 0],
+  //   });
+  // }, []); // محاسبه مسیر و فلش‌های جهت‌دار
 
   const { polylinePositions, arrows } = useMemo(() => {
-    if (!source || !dest) return { polylinePositions: [], arrows: [] }; // مرتب‌سازی ایستگاه‌ها در جهت حرکت برای رسم صحیح خط و محاسبه فلش‌ها
+    if (!source || !dest) {
+      return {
+        polylinePositions: [],
+        arrows: [],
+      };
+    }
+
     let orderedStations = stations.filter((s) => {
       const minId = Math.min(source.id, dest.id);
       const maxId = Math.max(source.id, dest.id);
+
       return s.id >= minId && s.id <= maxId;
     });
+
     orderedStations.sort((a, b) =>
       source.id < dest.id ? a.id - b.id : b.id - a.id,
     );
+
     const positions = orderedStations.map(
       (s) => [s.lat, s.lon] as [number, number],
     );
+
     const arrowElements = [];
-    for (let i = 0; i < orderedStations.length - 1; i++) {
+    const numSegments = orderedStations.length - 1;
+
+    for (let i = 0; i < numSegments; i++) {
+      // فلش فقط برای بخش اول و بخش آخر مسیر رسم می‌شود.
+      // اگر فقط یک بخش بین مبدا و مقصد وجود داشته باشد،
+      // فقط یک فلش رسم خواهد شد.
+      if (i !== 0 && i !== numSegments - 1) {
+        continue;
+      }
+
       const p1 = orderedStations[i];
-      const p2 = orderedStations[i + 1]; // محاسبه نقطه وسط بین دو ایستگاه
+      const p2 = orderedStations[i + 1];
+
       const midLat = (p1.lat + p2.lat) / 2;
-      const midLon = (p1.lon + p2.lon) / 2; // محاسبه زاویه چرخش فلش (تبدیل رادیان به درجه) // چون در مختصات صفحه Y رو به پایین زیاد می‌شود اما در نقشه lat رو به بالا، علامت منفی اعمال می‌شود
+      const midLon = (p1.lon + p2.lon) / 2;
+
       const dy = p2.lat - p1.lat;
       const dx = p2.lon - p1.lon;
+
       const angleRad = Math.atan2(dy, dx);
       const angleDeg = -(angleRad * (180 / Math.PI));
+
       const arrowIcon = L.divIcon({
-        html: `<div style="transform: translate(-50%, -50%) rotate(${angleDeg}deg); font-size: 40px; color: #f97316; text-shadow: 1px 1px 2px white; pointer-events: none;">➤</div>`,
+        html: `
+        <div
+          style="
+            transform: translate(-50%, -50%) rotate(${angleDeg}deg);
+            font-size: 20px;
+            color: #f97316;
+            font-weight: bold;
+            text-shadow:
+              1px 1px 0px white,
+              -1px -1px 0px white,
+              1px -1px 0px white,
+              -1px 1px 0px white;
+            pointer-events: none;
+            line-height: 1;
+          "
+        >
+          ➤
+        </div>
+      `,
         className: "",
         iconSize: [0, 0],
       });
+
       arrowElements.push(
         <Marker
           key={`arrow-${p1.id}-${p2.id}`}
@@ -144,7 +265,11 @@ const GeographicMap = ({
         />,
       );
     }
-    return { polylinePositions: positions, arrows: arrowElements };
+
+    return {
+      polylinePositions: positions,
+      arrows: arrowElements,
+    };
   }, [source, dest, stations]);
 
   useEffect(() => {
@@ -229,12 +354,25 @@ const GeographicMap = ({
             className="animate-pulse"
           />
         )}
+        {dialogInfo && (
+          <Marker
+            position={dialogInfo.clickedPoint}
+            icon={clickedLocationIcon}
+            interactive={false}
+            zIndexOffset={2000}
+          />
+        )}
         {/* نمایش مارکرهای تمام ایستگاه‌ها */}
         {stations.map((station) => {
           const { icon, zIndex } = getStationIcon(station);
           return (
             <Marker
-              eventHandlers={{ click: () => onStationClick(station.name) }}
+              eventHandlers={{
+                click: () =>
+                  isHoliday && holidayExcludes.find((id) => +id === station.id)
+                    ? {}
+                    : onStationClick(station.name),
+              }}
               key={station.id}
               position={[station.lat, station.lon]}
               icon={icon}
