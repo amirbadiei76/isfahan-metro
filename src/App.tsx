@@ -45,8 +45,8 @@ function App() {
   const [schedules, setSchedules] = useState<Schedule | undefined>(undefined); // واکشی اطلاعات اولیه
 
   useEffect(() => {
-    // fetch("https://isfahan-metro-api.onrender.com/api/metro/")
-    fetch("http://localhost:5000/api/metro/")
+    fetch("https://isfahan-metro-api.onrender.com/api/metro/")
+      // fetch("http://localhost:5000/api/metro/")
       .then((res) => res.json())
       .then((resp) => {
         setStations(resp.stations);
