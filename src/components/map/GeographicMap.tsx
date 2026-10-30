@@ -309,7 +309,7 @@ const GeographicMap = ({
   return (
     <div className="relative w-full">
       {dialogInfo && (
-        <div className="absolute top-4 right-4 z-[1000] bg-white text-black p-4 rounded-lg shadow-lg rtl font-vazir animate-fade-in border-r-4 border-blue-500">
+        <div className="absolute top-4 right-4 bg-white text-black p-4 rounded-lg shadow-lg rtl font-vazir animate-fade-in border-r-4 border-blue-500">
           <p className="font-bold text-gray-800 mb-1">نزدیک‌ترین ایستگاه:</p>
           <p className="text-blue-600 text-lg font-bold">
             {dialogInfo.stationName}
