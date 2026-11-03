@@ -60,14 +60,12 @@ const MapEventsHandler = ({
           minDistance = dist;
           closestStation = station;
 
-          if (closestStation) {
-            onNearestFound(
-              closestStation.name,
-              minDistance,
-              [lat, lng],
-              [closestStation.lat, closestStation.lon],
-            );
-          }
+          onNearestFound(
+            closestStation.name,
+            minDistance,
+            [lat, lng],
+            [closestStation.lat, closestStation.lon],
+          );
         }
       });
     },
@@ -124,10 +122,10 @@ const GeographicMap = ({
       zIndex = 500;
     }
     const html = `<div class="absolute flex flex-col items-center cursor-pointer transition-transform font-vazir" style="transform: translate(-50%, -50%);">
-      <div class="${circleClass} rounded-full transition-all duration-300  ${nearestId === station.id ? "animate duration-400 animate-pulse shadow-[0_0_14px_#0909f6]" : ""}">
+      <div class="${isHoliday && holidayExcludes.find((id) => +id === station.id) ? "bg-gray-600 cursor-default" : ""} ${circleClass} rounded-full transition-all duration-300  ${nearestId === station.id ? "animate duration-400 animate-pulse shadow-[0_0_14px_#0909f6]" : ""}">
       </div>
       <span
-        class="${textClass} absolute mt-1 text-center px-1.5 py-0.5 rounded-md max-w-13 min-w-11"
+        class="${textClass} ${isHoliday && holidayExcludes.find((id) => +id === station.id) ? "cursor-default" : ""} absolute mt-1 text-center px-1.5 py-0.5 rounded-md max-w-13 min-w-11"
         style="
           left: ${textOffsetX}px;
           top: ${textOffsetY}px;
@@ -309,7 +307,7 @@ const GeographicMap = ({
   return (
     <div className="relative w-full">
       {dialogInfo && (
-        <div className="absolute top-4 right-4 bg-white text-black p-4 rounded-lg shadow-lg rtl font-vazir animate-fade-in border-r-4 border-blue-500">
+        <div className="absolute top-4 right-4 z-2000 bg-white text-black p-4 rounded-lg shadow-lg rtl font-vazir animate-fade-in border-r-4 border-blue-500">
           <p className="font-bold text-gray-800 mb-1">نزدیک‌ترین ایستگاه:</p>
           <p className="text-blue-600 text-lg font-bold">
             {dialogInfo.stationName}
